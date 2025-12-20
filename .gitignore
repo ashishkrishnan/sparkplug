@@ -1,2 +1,8 @@
 
 src/config/local.h
+
+.idea/
+
+.pio/
+
+platformio.ini
