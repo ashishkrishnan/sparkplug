@@ -9,4 +9,9 @@ const char* HOSTNAME = "sparkplug";
 const char* WIFI_SSID = LOCAL_WIFI_SSID;
 const char* WIFI_PASS = LOCAL_WIFI_PASSWORD;
 
+const int BOOT_DELAY_IN_MS = 9000;
+
+const char* OS_NAME_PRIMARY = "ubuntu";
+const char* OS_NAME_SECONDARY = "windows";
+
 #endif
