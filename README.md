@@ -8,7 +8,7 @@ Unlike standard Wake-on-LAN which is unreliable, Sparkplug provides **state awar
 **Proposed Capabilities**
 -----------------------
 
-*   **Smart Wake:** Remotely power on your PC and automatically type the keystrokes to select your OS (e.g., Windows vs. Ubuntu).
+*   **Wake:** Remotely power on your PC and automatically type the keystrokes to select your OS via an API (/wake?os=ubuntu) (e.g., Windows vs. Ubuntu).
     
 *   **Safe Shutdown:** Use a "Ping Gate" to ensure it only triggers the power button if the PC is confirmed **ON** to prevents accidental power-ups.
     
