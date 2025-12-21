@@ -1,10 +1,10 @@
-#ifndef KEYBOARD_H
-#define KEYBOARD_H
+#ifndef USBKEYBOARD_H
+#define USBKEYBOARD_H
 #include "IKeyboard.h"
 #include "USB.h"
 #include "USBHIDKeyboard.h"
 
-class Keyboard : public IKeyboard {
+class USBKeyboard : public IKeyboard {
     private:
         USBHIDKeyboard _hid;
     public:
@@ -25,4 +25,4 @@ class Keyboard : public IKeyboard {
             _hid.releaseAll();
         }
 };
-#endif //KEYBOARD_H
+#endif //USBKEYBOARD_H
