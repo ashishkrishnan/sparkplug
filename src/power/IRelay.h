@@ -4,7 +4,9 @@
 
 class IRelay {
     public:
-        virtual void configure() = 0;
+    virtual ~IRelay() = default;
+
+    virtual void configure() = 0;
         virtual void setHigh() = 0;
         virtual void setLow() = 0;
 };

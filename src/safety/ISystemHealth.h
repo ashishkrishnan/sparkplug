@@ -3,7 +3,9 @@
 
 class ISystemHealth {
     public:
-        virtual float getInternalTemp() = 0;
+    virtual ~ISystemHealth() = default;
+
+    virtual float getInternalTemp() = 0;
 
         virtual bool isTargetPcAlive(const char* ip) = 0;
 };

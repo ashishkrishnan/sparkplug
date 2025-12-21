@@ -4,6 +4,8 @@
 
 class IKeyboard {
     public:
+        virtual ~IKeyboard() = default;
+
         virtual void begin() = 0;
 
         virtual void end() = 0;
