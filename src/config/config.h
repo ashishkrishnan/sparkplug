@@ -20,4 +20,6 @@ const float MAX_TEMP_C = 85.0;
 
 const char* TARGET_PC_IP_ADDRESS = LOCAL_TARGET_PC_IP_ADDRESS;
 
+constexpr uint8_t PIN_RELAY = 4;
+
 #endif
