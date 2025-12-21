@@ -6,23 +6,23 @@
 
 class Keyboard : public IKeyboard {
     private:
-        USBHIDKeyboard* _hid;
+        USBHIDKeyboard _hid;
     public:
         void begin() override {
             USB.begin();
-            _hid->begin();
+            _hid.begin();
         }
 
         void end() override {
-            _hid->end();
+            _hid.end();
         }
 
         void pressKey(uint8_t key) override {
-            _hid->press(key);
+            _hid.press(key);
         }
 
         void releaseAll() override {
-            _hid->releaseAll();
+            _hid.releaseAll();
         }
 };
 #endif //KEYBOARD_H
