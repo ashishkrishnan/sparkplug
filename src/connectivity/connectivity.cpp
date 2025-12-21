@@ -1,8 +1,8 @@
 #ifndef CONNECTIVITY_CPP
 #define CONNECTIVITY_CPP
 
-#include "connectivity.h"
-#include "config/config.h"
+#include "../../src/connectivity/connectivity.h"
+#include "../../src/config/config.h"
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <ArduinoOTA.h>
