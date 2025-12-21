@@ -2,16 +2,16 @@
 #define CONNECTIVITY_H
 #include <Arduino.h>
 
-void setupConnectivity();
+class IConnection {
+    public:
+        virtual ~IConnection() = default;
 
-void handleConnectivityLoop();
-
-bool isTargetPCAlive();
-
-String getIpAddress();
-
-long getWifiSignalStrength();
-
-float getInternalTemp();
+        virtual void setupConnectivity() = 0;
+        virtual void handleConnectivityLoop() = 0;
+        virtual bool isTargetPCAlive(const char* targetIp) = 0;
+        virtual String getIpAddress() = 0;
+        virtual long getWifiSignalStrength() = 0;
+        virtual float getInternalTemp() = 0;
+};
 
 #endif //CONNECTIVITY_H
