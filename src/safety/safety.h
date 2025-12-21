@@ -1,7 +1,7 @@
 #ifndef SAFETY_H
 #define SAFETY_H
 #include "ISystemHealth.h"
-#include "config/config.h"
+#include "../../src/config/config.h"
 
 class Safety {
     private:

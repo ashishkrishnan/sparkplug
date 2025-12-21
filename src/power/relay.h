@@ -2,7 +2,7 @@
 #define RELAY_H
 #include "IRelay.h"
 #include "Arduino.h"
-#include "config/config.h"
+#include "../../src/config/config.h"
 
 class Relay : public IRelay {
     public:
