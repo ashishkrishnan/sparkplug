@@ -22,5 +22,8 @@ static const char* TARGET_PC_IP_ADDRESS = LOCAL_TARGET_PC_IP_ADDRESS;
 
 static constexpr uint8_t PIN_RELAY = 4;
 
+static constexpr int HTTP_PORT = 80;
+static constexpr int MAX_LOGS = 50;
+static constexpr int WOL_PORT = 9;
 
 #endif
