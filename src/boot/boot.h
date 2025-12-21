@@ -3,10 +3,10 @@
 #include "IKeyboard.h"
 #include <Arduino.h>
 
-#include "config/config.h"
+#include "../../src/config/config.h"
 
-constexpr uint8_t HID_KEY_ENTER = 0xB0;
-constexpr uint8_t HID_KEY_DOWN = 0xD9;
+constexpr uint8_t KEY_ENTER = 0xB0;
+constexpr uint8_t KEY_DOWN = 0xD9;
 
 class Boot {
     private:
@@ -22,12 +22,12 @@ class Boot {
 
             if (os == OS_NAME_SECONDARY) {
                 for (int i = 0; i < GRUB_SECONDARY_OS_POSITION - 1; i++) {
-                    _kb->pressKey(HID_KEY_DOWN);
+                    _kb->pressKey(KEY_DOWN);
                     delay(100);
                     _kb->releaseAll();
                     delay(100);
                 }
-                _kb->pressKey(HID_KEY_ENTER);
+                _kb->pressKey(KEY_ENTER);
             } else {
                 _kb->pressKey(0xD9);
             }
