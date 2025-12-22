@@ -9,23 +9,22 @@
   </p>
 
   <p>
+    <a href="#why">Why?</a> •
     <a href="#capabilities">Capabilities</a> •
     <a href="#hardware">Hardware</a> •
     <a href="#wiring">Wiring</a> •
-    <a href="#installation">Installation</a> •
-    <a href="#why">Why?</a>
+    <a href="#installation">Installation</a>
   </p>
 
 </div>
 
 <br />
 
-Sparkplug sits inside your computer case, connected to the motherboard's USB and Power headers, allowing you to remotely Wake, Safe-Shutdown, and navigate BIOS/Dual-Boot menus via a simple REST API.
+Sparkplug sits inside your computer case, connected to the motherboard's USB and power headers, allowing you to remotely Wake, navigate BIOS/Dual-Boot menu and safely shutdown, all via simple REST APIs
 
-Unlike standard Wake-on-LAN, Sparkplug provides **state awareness**, **thermal safety (overheat protection)**, and **hardware-level keyboard emulation** for navigating GRUB/Boot Managers.
+Unlike standard Wake-on-LANs which are unreliable, mostly due to driver-os conflicts and hardware restrictions, the Sparkplug hooks into the motherboard providing **state awareness**, **thermal safety (overheat protection)**, and **hardware-level keyboard emulation** for navigating GRUB/Boot Managers.
 
-Rest APIs (works on browsers as well):
-
+Rest APIs:
 <br>*Wake up*
 <br> `POST/GET http://<sparkplug ip>/wake` (default os)
 <br>*<br> if you have a dual boot*
@@ -70,10 +69,10 @@ Rest APIs (works on browsers as well):
 <a id="capabilities"></a>
 ## 🚀 Capabilities
 
-* **Reliable Wake up on Lan with OS chooser:** Remotely power on your PC and automatically type the keystrokes to select your OS (e.g., Windows vs. Ubuntu).
+* **Reliable Wake up on Lan (WoL):** Remotely power on your PC and automatically type the keystrokes to select your OS (e.g., Windows vs. Ubuntu).
 * **Safe Shutdown:** Ensures, triggers are on the power button if the PC is confirmed ON. This prevents accidental power-ups.
 * **Thermal Guard:** Monitors internal case temperature. If the ESP32 exceeds **85°C**, it locks out all controls to prevent hardware damage.
-* **(optional) No cables setup:** Connects via internal USB header on the motherboard. No external cables or dongles.
+* **Realtime Health Monitoring**: Provides observability for hardware state and software sequences.
 
 > [!IMPORTANT] 
 > The OS chooser capability requires ESP32-S3 with Native USB OTG" (On-The-Go) support. 
@@ -87,7 +86,7 @@ Rest APIs (works on browsers as well):
 |:--------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| :--- |
 | **Microcontroller**       | ESP32-S3-DevKitC-1-N8R8 <br><br> *Use any ESP32-S3 variant. Remember to update the firmware settings for Flash/RAM sizes (like N16R8). <br><br> **S3 variant is recommended if you want to emulate keyboard behaviour*** | **N8** (8MB Flash) + **R8** (8MB OPI PSRAM). <br> *Note: "OPI PSRAM" setting is mandatory.* |
 | **Relay Module**          | 5V Relay (SRD-05VDC-SL-C)                                                                                                                                                                                                | Must support **High-Level Trigger**. <br> *Set the jumper to H.* |
-| **Data Cable (optional)** | 9-Pin Header (F) → USB-C                                                                                                                                                                                                 | Connects to the ESP32's **USB** port (Not UART). |
+| **Data Cable (optional)** | 9-Pin Header (F) → USB-C/USB-MICRO                                                                                                                                                                                       | Connects to the ESP32's **USB** port (Not UART). |
 | **Wiring**                | DuPont Wires                                                                                                                                                                                                             | Female-to-Male (Motherboard) & Female-to-Female (Internal). |
 
 ---
@@ -135,7 +134,7 @@ Edit `src/local.h` to match your network:
 ```cpp
 // Wifi setup
 WIFI_SSID     = "YOUR_WIFI_NAME";
-WIFI_PASS     = "YOUR_WIFI_PASSWORD";
+WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
 
 // Target PC Configuration
 LOCAL_OS_NAME_PRIMARY = "ubuntu";
@@ -149,6 +148,8 @@ LOCAL_TARGET_PC_IP_ADDRESS  = "192.168.1.100";
 
 // Time from Power On -> GRUB Menu
 LOCAL_BOOT_DELAY_IN_MS   = 12000;
+
+LOCAL_TIME_ZONE = "IST-5:30";
 ```
 
 ### Step 2: Manual Flashing via Arduino IDE
