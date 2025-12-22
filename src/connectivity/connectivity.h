@@ -3,15 +3,24 @@
 #include <Arduino.h>
 
 class IConnection {
-    public:
-        virtual ~IConnection() = default;
-
-        virtual void setupConnectivity() = 0;
-        virtual void handleConnectivityLoop() = 0;
-        virtual bool isTargetPCAlive(const char* targetIp) = 0;
-        virtual String getIpAddress() = 0;
-        virtual long getWifiSignalStrength() = 0;
-        virtual float getInternalTemp() = 0;
+public:
+    virtual ~IConnection() = default;
+    virtual void setupConnectivity() = 0;
+    virtual void handleConnectivityLoop() = 0;
+    virtual bool isTargetPCAlive(const char* targetIp) = 0;
+    virtual String getIpAddress() = 0;
+    virtual long getWifiSignalStrength() = 0;
+    virtual float getInternalTemp() = 0;
 };
 
-#endif //CONNECTIVITY_H
+class Connectivity : public IConnection {
+public:
+    void setupConnectivity() override;
+    void handleConnectivityLoop() override;
+    bool isTargetPCAlive(const char* targetIp) override;
+    String getIpAddress() override;
+    long getWifiSignalStrength() override;
+    float getInternalTemp() override;
+};
+
+#endif // CONNECTIVITY_H

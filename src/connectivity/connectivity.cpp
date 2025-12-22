@@ -1,46 +1,45 @@
 #ifndef CONNECTIVITY_CPP
 #define CONNECTIVITY_CPP
 
-#include "../../src/connectivity/connectivity.h"
+#include "connectivity.h"
 #include "../../src/config/config.h"
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <ArduinoOTA.h>
 #include <ESPping.h>
 
-class Connectivity : public IConnection {
-    public:
-        void setupConnectivity() override {
-        WiFi.setHostname(HOSTNAME);
-        WiFi.begin(WIFI_SSID, WIFI_PASS);
+void Connectivity::setupConnectivity() {
+    WiFi.setHostname(HOSTNAME);
+    WiFi.begin(WIFI_SSID, WIFI_PASS);
 
-        while (WiFi.status() != WL_CONNECTED) delay(500);
+    while (WiFi.status() != WL_CONNECTED) delay(500);
 
-        MDNS.begin(HOSTNAME);
-        ArduinoOTA.setHostname(HOSTNAME);
-        ArduinoOTA.begin();
-    }
+    MDNS.begin(HOSTNAME);
+    ArduinoOTA.setHostname(HOSTNAME);
+    ArduinoOTA.begin();
+}
 
-    void handleConnectivityLoop() override {
-        ArduinoOTA.handle();
-    }
+void Connectivity::handleConnectivityLoop() {
+    ArduinoOTA.handle();
+}
 
-    bool isTargetPCAlive(const char* targetIp) override {
-        IPAddress addr;
-        addr.fromString(targetIp);
+bool Connectivity::isTargetPCAlive(const char* targetIp) {
+    IPAddress addr;
+    if(addr.fromString(targetIp)) {
         return Ping.ping(addr);
     }
+    return false;
+}
 
-    String getIpAddress() override {
-        return WiFi.localIP().toString();
-    }
+String Connectivity::getIpAddress() {
+    return WiFi.localIP().toString();
+}
 
-    long getWifiSignalStrength() override {
-        return WiFi.RSSI();
-    }
+long Connectivity::getWifiSignalStrength() {
+    return WiFi.RSSI();
+}
 
-    float getInternalTemp() override {
-        return temperatureRead();
-    }
-};
+float Connectivity::getInternalTemp() {
+    return temperatureRead();
+}
 #endif
