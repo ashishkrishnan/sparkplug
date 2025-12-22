@@ -4,8 +4,8 @@
 #include "src/power/power.h"
 #include "src/boot/boot.h"
 #include "src/safety/safety.h"
-#include "src/connectivity/connectivity.cpp"
-#include "src/webapi/webservice.cpp"
+#include "src/connectivity/connectivity.h"
+#include "src/webservice//webservice.h"
 #include <Arduino.h>
 
 #ifdef RUN_TESTS_ON_BOOT
@@ -20,7 +20,7 @@ Connectivity network;
 Power power(&hwRelay); 
 Boot boot(&hwKb); 
 Safety safety(&hwHealth);
-WebService webApi;
+WebService web_service;
 
 #ifndef RUN_TESTS_ON_BOOT
 void executeWake(String os) {
@@ -47,14 +47,17 @@ void setup() {
     // Production Setup
     power.setup();
     network.setupConnectivity();
-    webApi.setupWebAPI(executeWake, executeShutdown);
+
+    // Pass the callbacks
+    web_service.setupWebAPI(executeWake, executeShutdown);
 #endif
 }
 
 void loop() {
 #ifndef RUN_TESTS_ON_BOOT
-    // Production Loop
     network.handleConnectivityLoop();
-    webApi.handleWebAPILoop();
+
+    // Handle API requests
+    web_service.handleWebAPILoop();
 #endif
 }
