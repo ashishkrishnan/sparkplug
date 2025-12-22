@@ -1,12 +1,12 @@
-#ifndef API_CPP
-#define API_CPP
-#include "../../src/webapi/webapi.h"
+#ifndef WEBSERVICE_CPP
+#define WEBSERVICE_CPP
+#include "../../src/webservice/webapi.h"
 #include "../../src/config/config.h"
 #include "../../src/connectivity/connectivity.cpp"
 #include "WebServer.h"
 #include "WiFiUdp.h"
 
-class Api : public WebApi {
+class WebService : public WebApi {
     WebServer server{
       HTTP_PORT
     };
@@ -20,8 +20,8 @@ class Api : public WebApi {
     int logIdx = 0;
     bool wrapped = false;
 
-  Connectivity getConn() {
-        return Connectivity();
+    static Connectivity getConn() {
+        return {};
     }
 
 public:
@@ -102,17 +102,19 @@ public:
       }
     }
 
-    void setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) { // Fixed typo
+    void setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
+      logEvent("WebService Starting");
       wakeCb = onWake;
       shutdownCb = onShutdown;
 
-      server.on("/wake", HTTP_POST, [this](){ handleWake(); });
-      server.on("/shutdown", HTTP_POST, [this](){ handleShutdown(); });
+      server.on("/wake", HTTP_ANY, [this](){ handleWake(); });
+      server.on("/shutdown", HTTP_ANY, [this](){ handleShutdown(); });
       server.on("/health", HTTP_GET, [this](){ handleHealth(); });
 
       server.begin();
       Udp.begin(WOL_PORT);
-      logEvent("WebAPI Started");
+
+      logEvent("Service Ready! - All systems go!");
     }
 
     void handleWebAPILoop() {

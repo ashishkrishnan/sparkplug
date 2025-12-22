@@ -5,7 +5,7 @@
 #include "src/boot/boot.h"
 #include "src/safety/safety.h"
 #include "src/connectivity/connectivity.cpp"
-#include "src/webapi/api.cpp"
+#include "src/webapi/webservice.cpp"
 #include <Arduino.h>
 
 #ifdef RUN_TESTS_ON_BOOT
@@ -20,7 +20,7 @@ Connectivity network;
 Power power(&hwRelay); 
 Boot boot(&hwKb); 
 Safety safety(&hwHealth);
-Api webApi;
+WebService webApi;
 
 #ifndef RUN_TESTS_ON_BOOT
 void executeWake(String os) {
