@@ -3,25 +3,25 @@
 #include <Arduino.h>
 #include "local.h"
 
+// Change your host name
 static const char* HOSTNAME = "sparkplug";
 
-// Wifi Configuration
+// Wifi Configuration - Local
 static const char* WIFI_SSID = LOCAL_WIFI_SSID;
 static const char* WIFI_PASS = LOCAL_WIFI_PASSWORD;
 
-static constexpr int BOOT_DELAY_IN_MS = LOCAL_BOOT_DELAY_IN_MS;
-
+// Target PC Configuration - Local
 static const char* OS_NAME_PRIMARY = LOCAL_OS_NAME_PRIMARY;
 static const char* OS_NAME_SECONDARY = LOCAL_OS_NAME_SECONDARY;
-
+static constexpr int BOOT_DELAY_IN_MS = LOCAL_BOOT_DELAY_IN_MS;
 static constexpr int GRUB_SECONDARY_OS_POSITION = LOCAL_GRUB_SECONDARY_OS_POSITION;
-
-static const float MAX_TEMP_C = 85.0;
-
 static const char* TARGET_PC_IP_ADDRESS = LOCAL_TARGET_PC_IP_ADDRESS;
 
+// ESP Configuration
 static constexpr uint8_t PIN_RELAY = 4;
+static const float MAX_TEMP_C = 85.0;
 
+// Web server
 static constexpr int HTTP_PORT = 80;
 static constexpr int MAX_LOGS = 50;
 static constexpr int WOL_PORT = 9;
