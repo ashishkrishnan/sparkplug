@@ -34,8 +34,37 @@ Rest APIs (works on browsers as well):
 
 <br>*Shutdown* : <br>`POST/GET http://<sparkplug ip>/shutdown`
 
-<br>*Health*  : <br>`GET http://<sparkplug ip>/health`
+<br>*Health* :<br>`GET http://<sparkplug ip>/health`
 
+<br> Note: API auto-refreshes every 20 seconds configurable or call with query parameter `refresh=50`
+
+```json
+{
+  "system": {
+    "status": "online",
+    "uptime_s": 91,
+    "uptime_str": "0h 1m 31s",
+    "server_time": "22-12-2025 10:20:53 PM"
+  },
+  "hardware": {
+    "chip": "ESP32-S3 Rev 2",
+    "free_ram_kb": 223,
+    "total_ram_kb": 317,
+    "temp_c": 36.8
+  },
+  "network": {
+    "ip": "192.168.0.25",
+    "mac": "<mac-address>",
+    "signal_dbm": -60
+  },
+  "logs": [
+    "[Syncing with NTP time ] [Sparkplug] Starting system",
+    "[22-12-2025 10:19:31 PM] [SparkPlug] WebService Starting",
+    "[22-12-2025 10:19:31 PM] [SparkPlug] Service Ready! - All systems go!",
+    "[22-12-2025 10:19:31 PM] [Sparkplug] Boot Complete. Ready."
+  ]
+}
+```
 ---
 
 <a id="capabilities"></a>

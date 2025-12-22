@@ -17,6 +17,8 @@ static const char* LOCAL_OS_NAME_SECONDARY = "windows";
 static constexpr int LOCAL_GRUB_SECONDARY_OS_POSITION = 4;
 
 static const char* LOCAL_TARGET_PC_IP_ADDRESS = "192.168.1.7";
+
+const char* LOCAL_TIME_ZONE = "IST-5:30"; // e.g "IST-5:30" which is Asia/Kolkata
 ```
 > [!IMPORTANT]
 > Routers have an option to permanent reserve DHCP local IP to your devices. Use to ensure that the target PC does have a new ip.

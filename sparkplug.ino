@@ -27,7 +27,8 @@ WebService web_service;
 
 void executeWake(String os) {
     if(!safety.isSafeToOperate()) {
-        web_service.logEvent("SEQ: Aborted. Thermal/Safety Lock.");
+        web_service.logEvent(
+            "[Critical] Wake Aborted. Thermal/Safety checked failed (>=" + String(MAX_TEMP_C) + ") degrees");
         return;
     }
 

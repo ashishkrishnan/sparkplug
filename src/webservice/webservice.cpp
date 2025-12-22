@@ -14,12 +14,11 @@ WebService::WebService() : server(HTTP_PORT) {
 }
 
 void WebService::logEvent(String msg) {
-    String entry = "[" + String(millis()/1000) + "s] " + msg;
+    String entry = "[" + network.getFormattedTime() + "] " + msg;
 
     logs[logIdx] = entry;
     logIdx++;
     if (logIdx >= MAX_LOGS) { logIdx = 0; wrapped = true; }
-
     Serial.println(entry);
 }
 
@@ -34,22 +33,52 @@ bool WebService::isThermalUnsafe() {
 }
 
 void WebService::handleHealth() {
-    String json = "{";
-    json += "\"status\":\"online\",";
-    json += "\"ip\":\"" + network.getIpAddress() + "\",";
-    json += "\"signal_dbm\":" + String(network.getWifiSignalStrength()) + ",";
-    json += "\"temp_c\":" + String(network.getInternalTemp()) + ",";
+    String refresh_interval = String(REFRESH_INTERVAL_FOR_HEALTH_API);
+    String refreshArg = server.hasArg("refresh") ? server.arg("refresh") : refresh_interval;
+    // Prevent crazy fast refreshes (min 1 sec)
+    if (refreshArg.toInt() < 1) refreshArg = refresh_interval;
 
-    // Insert Logs
-    json += "\"logs\":[";
+    long rssi = network.getWifiSignalStrength();
+    uint32_t freeRam = network.getFreeHeap();
+    uint32_t totalRam = network.getTotalHeap();
+
+    String json = "{";
+
+    json += "\"system\": {";
+    json += "\"status\": \"online\",";
+    json += "\"uptime_s\": " + String(millis() / 1000) + ","; // Raw seconds is better for UI math
+    json += "\"uptime_str\": \"" + network.getUptime() + "\",";
+    json += "\"server_time\": \"" + network.getFormattedTime() + "\"";
+    json += "},";
+
+    json += "\"hardware\": {";
+    json += "\"chip\": \"" + network.getChipModel() + "\",";
+    json += "\"free_ram_kb\": " + String(freeRam) + ",";
+    json += "\"total_ram_kb\": " + String(totalRam) + ",";
+    json += "\"temp_c\": " + String(network.getInternalTemp());
+    json += "},";
+
+    json += "\"network\": {";
+    json += "\"ip\": \"" + network.getIpAddress() + "\",";
+    json += "\"mac\": \"" + network.getMacAddress() + "\",";
+    json += "\"signal_dbm\": " + String(rssi);
+    json += "},";
+
+    json += "\"logs\": [";
     int count = wrapped ? MAX_LOGS : logIdx;
     int start = wrapped ? logIdx : 0;
     for(int i=0; i<count; i++) {
         int idx = (start + i) % MAX_LOGS;
-        json += "\"" + logs[idx] + "\"";
+        String cleanLog = logs[idx];
+        cleanLog.replace("\"", "'");
+
+        json += "\"" + cleanLog + "\"";
         if(i < count-1) json += ",";
     }
-    json += "]}";
+    json += "]";
+    json += "}";
+
+    server.sendHeader("Refresh", refreshArg);
     server.send(200, "application/json", json);
 }
 
@@ -61,14 +90,14 @@ void WebService::handleWake() {
         return;
     }
 
-    logEvent("API Wake Req: " + os);
+    logEvent("Wake Request: " + os);
     server.send(200, "text/plain", "Sparking " + os);
 
     if(wakeCb) wakeCb(os);
 }
 
 void WebService::handleShutdown() {
-    logEvent("API Shutdown Req. Checking Ping...");
+    logEvent("API Shutdown Request. Checking Ping...");
 
     if(isThermalUnsafe()) {
         server.send(503, "text/plain", "Thermal Lockout. Device too hot.");
@@ -90,14 +119,14 @@ void WebService::checkWoL() {
     if (size == 102) {
         Udp.read(packetBuffer, 102);
         if(packetBuffer[0] == 0xFF) {
-            logEvent("WoL Recv from " + Udp.remoteIP().toString());
+            logEvent("[Wake] Wake up on Lan (WoL) received from " + Udp.remoteIP().toString());
             if(!isThermalUnsafe() && wakeCb) wakeCb(OS_NAME_PRIMARY);
         }
     }
 }
 
 void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
-    logEvent("WebService Starting");
+    logEvent("[SparkPlug] WebService Starting");
     wakeCb = onWake;
     shutdownCb = onShutdown;
 
@@ -108,7 +137,7 @@ void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
     server.begin();
     Udp.begin(WOL_PORT);
 
-    logEvent("Service Ready! - All systems go!");
+    logEvent("[SparkPlug] Service Ready! - All systems go!");
 }
 
 void WebService::handleWebAPILoop() {
