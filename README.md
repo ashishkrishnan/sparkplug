@@ -24,15 +24,15 @@ Sparkplug sits inside your computer case, connected to the motherboard's USB and
 
 Unlike standard Wake-on-LAN, Sparkplug provides **state awareness**, **thermal safety (overheat protection)**, and **hardware-level keyboard emulation** for navigating GRUB/Boot Managers.
 
-Rest APIs:
+Rest APIs (works on browsers as well):
 
 <br>*Wake up*
-<br> `POST http://<sparkplug ip>/wake` (default os)
+<br> `POST/GET http://<sparkplug ip>/wake` (default os)
 <br>*<br> if you have a dual boot*
-<br> `POST http://<sparkplug ip>/wake?os=windows`
-<br> `POST http://<sparkplug ip>/wake?os=ubuntu`
+<br> `POST/GET http://<sparkplug ip>/wake?os=windows`
+<br> `POST/GET  http://<sparkplug ip>/wake?os=ubuntu`
 
-<br>*Shutdown* : <br>`POST http://<sparkplug ip>/shutdown`
+<br>*Shutdown* : <br>`POST/GET http://<sparkplug ip>/shutdown`
 
 <br>*Health*  : <br>`GET http://<sparkplug ip>/health`
 
@@ -45,6 +45,10 @@ Rest APIs:
 * **Safe Shutdown:** Ensures, triggers are on the power button if the PC is confirmed ON. This prevents accidental power-ups.
 * **Thermal Guard:** Monitors internal case temperature. If the ESP32 exceeds **85°C**, it locks out all controls to prevent hardware damage.
 * **(optional) No cables setup:** Connects via internal USB header on the motherboard. No external cables or dongles.
+
+> [!IMPORTANT] 
+> The OS chooser capability requires ESP32-S3 with Native USB OTG" (On-The-Go) support. 
+> This makes it an ideal case for pretending it to be an HID in order to choose OS. In later milestone, we will make this modular to flash capabilities based on the board.
 
 ---
 <a id="hardware"></a>

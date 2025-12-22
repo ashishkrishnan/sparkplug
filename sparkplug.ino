@@ -36,7 +36,7 @@ void executeShutdown() {
 
 void setup() {
     Serial.begin(115200);
-    delay(2000); // Safety wait for Serial monitor
+    delay(2000);
 
 #ifdef RUN_TESTS_ON_BOOT
     Serial.println("--- STARTING TEST SUITE ---");
@@ -46,16 +46,15 @@ void setup() {
 #else
     // Production Setup
     power.setup();
-    network.setupConnectivity(); // <--- FIXED: Uses global instance
+    network.setupConnectivity();
     webApi.setupWebAPI(executeWake, executeShutdown);
-    Serial.println("SPARKPLUG READY");
 #endif
 }
 
 void loop() {
 #ifndef RUN_TESTS_ON_BOOT
     // Production Loop
-    network.handleConnectivityLoop(); // <--- FIXED: Uses global instance
+    network.handleConnectivityLoop();
     webApi.handleWebAPILoop();
 #endif
 }
