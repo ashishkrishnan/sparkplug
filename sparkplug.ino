@@ -19,7 +19,7 @@ Health hwHealth;
 Connectivity network;
 
 Power power(&hwRelay);
-Boot* bootSystem;
+Boot* bootSystem = nullptr;
 Safety safety(&hwHealth);
 WebService web_service;
 

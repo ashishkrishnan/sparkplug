@@ -2,13 +2,15 @@
 #define WEBSERVICE_CPP
 #include "../../src/config/config.h"
 #include "../../src/connectivity/connectivity.h"
+#include "../../src/boot/usbkeyboard.h"
+#include "../../src/boot/boot.h"
 #include "WebServer.h"
 #include "WiFiUdp.h"
-#include "../../src/boot/usbkeyboard.h"
 #include "webservice.h"
 
 extern Connectivity network;
 extern USBKeyboard hwKb;
+extern Boot* bootSystem;
 
 WebService::WebService() : server(HTTP_PORT) {
     // Constructor initializes server port
@@ -124,12 +126,34 @@ void WebService::handleWake() {
         return;
     }
 
-    const String os = server.hasArg("os") ? server.arg("os") : OS_NAME_PRIMARY;
-    const String strategy = server.hasArg("strategy") ? server.arg("strategy") : DEFAULT_BOOT_STRATEGY;
+    if (bootSystem->isBusy()) {
+        logEvent("[WAKE] Rejected - System is Busy");
+        server.send(429, "text/plain", "Busy: Sequence in progress");
+        return;
+    }
 
-    logEvent("API Wake Req: " + os + " [Mode: " + strategy + "]");
+    bool isOnline = network.isTargetPCAlive(TARGET_PC_IP_ADDRESS);
+    bool force = server.hasArg("force") && server.arg("force") == "true";
 
-    server.send(200, "text/plain", "OK: Sparking" + os + "with " + strategy + " strategy..");
+    if (isOnline && !force) {
+        logEvent("[WAKE] Rejected - Target is already Online (" + String(TARGET_PC_IP_ADDRESS) + ")");
+        String msg = "Safety Block: Target is already Online.\n";
+        msg += "Use ?force=true to override if you intend to shutdown/reset.";
+
+        server.send(409, "text/plain", msg);
+        return;
+    }
+
+    if (isOnline && force) {
+        logEvent("[WAKE] Warning - Force override used on live target.");
+    }
+
+    // --- EXECUTE ---
+    String os = server.hasArg("os") ? server.arg("os") : OS_NAME_PRIMARY;
+    String strategy = server.hasArg("strategy") ? server.arg("strategy") : DEFAULT_BOOT_STRATEGY;
+
+    logEvent("[WAKE] Start [" + os + "] Mode: " + strategy);
+    server.send(200, "text/plain", "Wake Sequence Started");
 
     if(wakeCb) wakeCb(os, strategy);
 }

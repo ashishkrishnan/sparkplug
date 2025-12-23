@@ -13,11 +13,18 @@ class Boot {
     private:
         IKeyboard* _kb;
         Logger _logger;
+        bool _isBusy = false;
+
 
     public:
         Boot(IKeyboard* kb, Logger logger) : _kb(kb), _logger(std::move(logger)) {}
 
-        void selectOS(const String &os, const String &strategy) const {
+        bool isBusy() { return _isBusy; }
+
+        void selectOS(const String &os, const String &strategy) {
+            if (_isBusy) return; // internal double-check
+            _isBusy = true;
+
             _logger("[BOOT] Sequence Started for " + os);
 
             if (strategy == "aggressive") {
@@ -27,6 +34,7 @@ class Boot {
             }
 
             performNavigation(os);
+            _isBusy = false;
         }
 
     private:
