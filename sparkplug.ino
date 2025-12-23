@@ -5,7 +5,7 @@
 #include "src/boot/boot.h"
 #include "src/safety/safety.h"
 #include "src/connectivity/connectivity.h"
-#include "src/webservice//webservice.h"
+#include "src/webservice/webservice.h"
 #include <Arduino.h>
 
 #ifdef RUN_TESTS_ON_BOOT
