@@ -20,7 +20,7 @@ void WebService::handleWebAPILoop() {
 }
 
 void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
-    logEvent("[SparkPlug] WebService Starting");
+    logEvent("[Sparkplug] WebService Starting");
     wakeCb = onWake;
     shutdownCb = onShutdown;
 
@@ -54,7 +54,11 @@ bool WebService::isThermalUnsafe() {
     }
     return false;
 }
-
+/**
+ * Route: /health
+ *
+ * TODO(ak) move this to a separate class.
+ */
 void WebService::handleHealth() {
     String refresh_interval = String(REFRESH_INTERVAL_FOR_HEALTH_API_IN_SECONDS);
     String refreshArg = server.hasArg("refresh") ? server.arg("refresh") : refresh_interval;
@@ -105,9 +109,18 @@ void WebService::handleHealth() {
     server.send(200, "application/json", json);
 }
 
+/**
+ * Route /wake
+ * Queries
+ * os: operating system of your choice from primary/secondary
+ * strategy: standard / aggressive - a technique that works for some motherboards to allow HID during POST.
+ *
+ * example: /wake?os=ubuntu&strategy=standard or /wake?os=ubuntu&strategy=aggressive
+ * * TODO(ak) move this to a separate class.
+ */
 void WebService::handleWake() {
     if(isThermalUnsafe()) {
-        server.send(503, "text/plain", "Thermal Lockout. Device too hot.");
+        server.send(503, "text/plain", "Thermal Lockout. Sparkplug too hot.");
         return;
     }
 
@@ -121,24 +134,31 @@ void WebService::handleWake() {
     if(wakeCb) wakeCb(os, strategy);
 }
 
+/**
+ * Route: /shutdown
+ *
+ * TODO(ak) move this to a separate class.
+ */
 void WebService::handleShutdown() {
-    logEvent("API Shutdown Request. Checking Ping...");
-
+    logEvent("[Shutdown] Shutdown Request. Checking Ping...");
     if(isThermalUnsafe()) {
-        server.send(503, "text/plain", "Thermal Lockout. Device too hot.");
+        server.send(503, "text/plain", "Thermal Lockout. Sparkplug too hot.");
         return;
     }
 
     if(network.isTargetPCAlive(TARGET_PC_IP_ADDRESS)) {
-        logEvent("Target ON. Shutting down.");
+        logEvent("[Shutdown] Target ON. Shutting down.");
         server.send(200, "text/plain", "Executing Safe Shutdown");
         if(shutdownCb) shutdownCb();
     } else {
-        logEvent("Target unreachable (OFF). Aborting.");
+        logEvent("[Shutdown] Target unreachable (OFF). Aborting.");
         server.send(409, "text/plain", "Target OFF. Aborted.");
     }
 }
 
+/**
+ * Standard UDP protocol for WakeOnLan
+ */
 void WebService::checkWoL() {
     int size = Udp.parsePacket();
     if (size == 102) {
@@ -150,6 +170,11 @@ void WebService::checkWoL() {
     }
 }
 
+/**
+ * Route: /debug/type?key=enter
+ * Comes in handy to check if the HID is working as expected.
+ * TODO(ak) move this to a separate class.
+ */
 void WebService::debugTyping() {
     if (!server.hasArg("key")) {
         server.send(400, "text/plain", "Missing 'key'");

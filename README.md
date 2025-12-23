@@ -58,8 +58,8 @@ Rest APIs:
   },
   "logs": [
     "[Syncing with NTP time ] [Sparkplug] Starting system",
-    "[22-12-2025 10:19:31 PM] [SparkPlug] WebService Starting",
-    "[22-12-2025 10:19:31 PM] [SparkPlug] Service Ready! - All systems go!",
+    "[22-12-2025 10:19:31 PM] [Sparkplug] WebService Starting",
+    "[22-12-2025 10:19:31 PM] [Sparkplug] Service Ready! - All systems go!",
     "[22-12-2025 10:19:31 PM] [Sparkplug] Boot Complete. Ready."
   ]
 }
