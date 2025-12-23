@@ -31,5 +31,6 @@ static const char* NTP_SERVER    = "pool.ntp.org";
 static const char* TIME_ZONE     = LOCAL_TIME_ZONE; // e.g "IST-5:30" which is Asia/Kolkata TODO write/find a library to convert standard timezones into this format.
 
 static constexpr int REFRESH_INTERVAL_FOR_HEALTH_API_IN_SECONDS = 30;
+constexpr unsigned long POST_BOOT_COOL_DOWN_IN_SECONDS = 60;
 
 #endif

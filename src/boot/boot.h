@@ -14,12 +14,26 @@ class Boot {
         IKeyboard* _kb;
         Logger _logger;
         bool _isBusy = false;
+        unsigned long _lastSequenceFinishTime = 0;
 
 
     public:
         Boot(IKeyboard* kb, Logger logger) : _kb(kb), _logger(std::move(logger)) {}
 
         bool isBusy() { return _isBusy; }
+
+        bool isCoolingDown() {
+            if (_isBusy) return false;
+
+            unsigned long elapsed = (millis() - _lastSequenceFinishTime) / 1000;
+            return (elapsed < POST_BOOT_COOL_DOWN_IN_SECONDS);
+        }
+
+        long getCoolDownRemaining() {
+            if (!isCoolingDown()) return 0;
+            unsigned long elapsed = (millis() - _lastSequenceFinishTime) / 1000;
+            return POST_BOOT_COOL_DOWN_IN_SECONDS - elapsed;
+        }
 
         void selectOS(const String &os, const String &strategy) {
             if (_isBusy) return; // internal double-check
@@ -35,6 +49,7 @@ class Boot {
 
             performNavigation(os);
             _isBusy = false;
+            _lastSequenceFinishTime = millis();
         }
 
     private:

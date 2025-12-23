@@ -132,23 +132,23 @@ void WebService::handleWake() {
         return;
     }
 
-    bool isOnline = network.isTargetPCAlive(TARGET_PC_IP_ADDRESS);
     bool force = server.hasArg("force") && server.arg("force") == "true";
 
-    if (isOnline && !force) {
-        logEvent("[WAKE] Rejected - Target is already Online (" + String(TARGET_PC_IP_ADDRESS) + ")");
-        String msg = "Safety Block: Target is already Online.\n";
-        msg += "Use ?force=true to override if you intend to shutdown/reset.";
+    if (bootSystem->isCoolingDown() && !force) {
+        long remaining = bootSystem->getCoolDownRemaining();
+        String msg = "Safety Block: System is in Cool-Down (" + String(remaining) + "s remaining).\n";
+        msg += "OS is likely still loading. Use ?force=true to override.";
 
-        server.send(409, "text/plain", msg);
+        logEvent("[WAKE] Rejected - In Cool Down (" + String(remaining) + "s left)");
+        server.send(429, "text/plain", msg);
         return;
     }
 
+    bool isOnline = network.isTargetPCAlive(TARGET_PC_IP_ADDRESS);
     if (isOnline && force) {
         logEvent("[WAKE] Warning - Force override used on live target.");
     }
 
-    // --- EXECUTE ---
     String os = server.hasArg("os") ? server.arg("os") : OS_NAME_PRIMARY;
     String strategy = server.hasArg("strategy") ? server.arg("strategy") : DEFAULT_BOOT_STRATEGY;
 
