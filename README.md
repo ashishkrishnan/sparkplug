@@ -24,18 +24,22 @@ Sparkplug sits inside your computer case, connected to the motherboard's USB and
 
 Unlike standard Wake-on-LANs which are unreliable, mostly due to driver-os conflicts and hardware restrictions, the Sparkplug hooks into the motherboard providing **state awareness**, **thermal safety (overheat protection)**, and **hardware-level keyboard emulation** for navigating GRUB/Boot Managers.
 
-Rest APIs:
+APIs docs:
 <br>*Wake up*
 <br> `POST/GET http://<sparkplug ip>/wake` (default os)
 <br>*<br> if you have a dual boot*
-<br> `POST/GET http://<sparkplug ip>/wake?os=windows`
-<br> `POST/GET  http://<sparkplug ip>/wake?os=ubuntu`
+<br> `POST/GET http://<sparkplug>/wake?os=windows`
+<br> `POST/GET http://<sparkplug>/wake?os=ubuntu`
+<br> `POST/GET http://<sparkplug>/wake?os=windows&strategy=standard`
+<br> `POST/GET http://<sparkplug>/wake?os=windows&strategy=standard&force=true`
 
-<br>*Shutdown* : <br>`POST/GET http://<sparkplug ip>/shutdown`
+Note: Use `strategy = aggressive` if your bios is ignoring key inputs. 
 
-<br>*Health* :<br>`GET http://<sparkplug ip>/health`
+<br>*Shutdown* : <br>`POST/GET http://<sparkplug>/shutdown`
 
-<br> Note: API auto-refreshes every 20 seconds configurable or call with query parameter `refresh=50`
+<br>*Health* :<br>`GET http://<sparkplug>/health`
+
+Note: API auto-refreshes every 20 seconds configurable or call with query parameter `refresh=50`
 
 ```json
 {
@@ -64,15 +68,22 @@ Rest APIs:
   ]
 }
 ```
+<br>*Debug*: <br>`GET/POST http://<sparkplug>/debug/type?key=a`
+
+Note: Use this if you want to test if the Sparkplug is getting detected as a keyboard.
+
 ---
 
 <a id="capabilities"></a>
 ## 🚀 Capabilities
 
-* **Reliable Wake up on Lan (WoL):** Remotely power on your PC and automatically type the keystrokes to select your OS (e.g., Windows vs. Ubuntu).
-* **Safe Shutdown:** Ensures, triggers are on the power button if the PC is confirmed ON. This prevents accidental power-ups.
-* **Thermal Guard:** Monitors internal case temperature. If the ESP32 exceeds **85°C**, it locks out all controls to prevent hardware damage.
+* **Reliable Wake up on Lan (WoL):** Remotely power on your PC over Wifi, which triggers a relay to power on via the motherboard headers.
+* **Reliable OS selector:** Use predefined keyboard input to navigate your primary or secondary os (e.g ubuntu or windows)
+* **Shutdown:** Ensures, triggers are on the power button if the PC is confirmed ON.
+* **Thermal Guard:** Monitors internal case temperature. If the Sparkplug exceeds **85°C**, it locks out all controls to prevent hardware damage.
+* **Safety protocols:** Prevents any accidental shutdown or wake-ups if Sparkplug detects an ongoing sequence or is in cool down period.
 * **Realtime Health Monitoring**: Provides observability for hardware state and software sequences.
+* **Debug Mode**: Has a debug mode for testing if your motherboard or OS settings are HID compliant.
 
 > [!IMPORTANT] 
 > The OS chooser capability requires ESP32-S3 with Native USB OTG" (On-The-Go) support. 
