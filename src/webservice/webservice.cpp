@@ -33,7 +33,7 @@ bool WebService::isThermalUnsafe() {
 }
 
 void WebService::handleHealth() {
-    String refresh_interval = String(REFRESH_INTERVAL_FOR_HEALTH_API);
+    String refresh_interval = String(REFRESH_INTERVAL_FOR_HEALTH_API_IN_SECONDS);
     String refreshArg = server.hasArg("refresh") ? server.arg("refresh") : refresh_interval;
     // Prevent crazy fast refreshes (min 1 sec)
     if (refreshArg.toInt() < 1) refreshArg = refresh_interval;
