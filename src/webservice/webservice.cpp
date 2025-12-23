@@ -14,6 +14,28 @@ WebService::WebService() : server(HTTP_PORT) {
     // Constructor initializes server port
 }
 
+void WebService::handleWebAPILoop() {
+    server.handleClient();
+    checkWoL();
+}
+
+void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
+    logEvent("[SparkPlug] WebService Starting");
+    wakeCb = onWake;
+    shutdownCb = onShutdown;
+
+    server.on("/wake", HTTP_ANY, [this](){ handleWake(); });
+    server.on("/shutdown", HTTP_ANY, [this](){ handleShutdown(); });
+    server.on("/health", HTTP_GET, [this](){ handleHealth(); });
+
+    server.on("/debug/type", HTTP_GET, [this]() { debugTyping(); });
+
+    server.begin();
+    Udp.begin(WOL_PORT);
+
+    logEvent("[SparkPlug] Service Ready! - All systems go!");
+}
+
 void WebService::logEvent(String msg) {
     String entry = "[" + network.getFormattedTime() + "] " + msg;
 
@@ -84,17 +106,19 @@ void WebService::handleHealth() {
 }
 
 void WebService::handleWake() {
-    String os = server.hasArg("os") ? server.arg("os") : OS_NAME_PRIMARY;
-
     if(isThermalUnsafe()) {
         server.send(503, "text/plain", "Thermal Lockout. Device too hot.");
         return;
     }
 
-    logEvent("Wake Request: " + os);
-    server.send(200, "text/plain", "Sparking " + os);
+    const String os = server.hasArg("os") ? server.arg("os") : OS_NAME_PRIMARY;
+    const String strategy = server.hasArg("strategy") ? server.arg("strategy") : DEFAULT_BOOT_STRATEGY;
 
-    if(wakeCb) wakeCb(os);
+    logEvent("API Wake Req: " + os + " [Mode: " + strategy + "]");
+
+    server.send(200, "text/plain", "OK: Sparking" + os + "with " + strategy + " strategy..");
+
+    if(wakeCb) wakeCb(os, strategy);
 }
 
 void WebService::handleShutdown() {
@@ -121,26 +145,9 @@ void WebService::checkWoL() {
         Udp.read(packetBuffer, 102);
         if(packetBuffer[0] == 0xFF) {
             logEvent("[Wake] Wake up on Lan (WoL) received from " + Udp.remoteIP().toString());
-            if(!isThermalUnsafe() && wakeCb) wakeCb(OS_NAME_PRIMARY);
+            if(!isThermalUnsafe() && wakeCb) wakeCb(OS_NAME_PRIMARY, DEFAULT_BOOT_STRATEGY);
         }
     }
-}
-
-void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
-    logEvent("[SparkPlug] WebService Starting");
-    wakeCb = onWake;
-    shutdownCb = onShutdown;
-
-    server.on("/wake", HTTP_ANY, [this](){ handleWake(); });
-    server.on("/shutdown", HTTP_ANY, [this](){ handleShutdown(); });
-    server.on("/health", HTTP_GET, [this](){ handleHealth(); });
-
-    server.on("/debug/type", HTTP_GET, [this]() { debugTyping(); });
-
-    server.begin();
-    Udp.begin(WOL_PORT);
-
-    logEvent("[SparkPlug] Service Ready! - All systems go!");
 }
 
 void WebService::debugTyping() {
@@ -172,11 +179,6 @@ void WebService::debugTyping() {
     } else {
         server.send(400, "text/plain", "Unknown Key");
     }
-}
-
-void WebService::handleWebAPILoop() {
-    server.handleClient();
-    checkWoL();
 }
 
 #endif

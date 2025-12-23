@@ -3,6 +3,7 @@
 #include "IKeyboard.h"
 #include <Arduino.h>
 #include <functional>
+#include <utility>
 #include "usbkeyboard.h"
 #include "../../src/config/config.h"
 
@@ -14,53 +15,59 @@ class Boot {
         Logger _logger;
 
     public:
-        Boot(IKeyboard* kb, Logger logger) : _kb(kb), _logger(logger) {}
+        Boot(IKeyboard* kb, Logger logger) : _kb(kb), _logger(std::move(logger)) {}
 
-    void selectOS(String os) {
+        void selectOS(const String &os, const String &strategy) const {
             _logger("[BOOT] Sequence Started for " + os);
-            _logger("[BOOT] Total Delay " + String(BOOT_DELAY_IN_MS) + "ms");
 
+            if (strategy == "aggressive") {
+                performAggressiveWait();
+            } else {
+                performStandardWait();
+            }
+
+            performNavigation(os);
+        }
+
+    private:
+        void performStandardWait() const {
+            _logger("[BOOT] Standard Wait (" + String(BOOT_DELAY_IN_MS) + "ms)");
+            delay(BOOT_DELAY_IN_MS);
+        }
+
+        void performAggressiveWait() const {
+            _logger("[BOOT] Aggressive Wait (Heartbeat Active)");
             long startTime = millis();
             long lastHeartbeat = 0;
 
-            while ((millis() - startTime) < BOOT_DELAY_IN_MS) {
-                if ((millis() - lastHeartbeat) > 2000) {
-                    _logger("[BOOT] Heartbeat (Tap Shift) - Keeping USB Alive...");
-
+            while (millis() - startTime < BOOT_DELAY_IN_MS) {
+                if (millis() - lastHeartbeat > 2000) {
                     _kb->pressKey(KEY_SHIFT);
                     delay(50);
                     _kb->releaseAll();
-
                     lastHeartbeat = millis();
                 }
                 delay(100);
             }
+        }
 
-            _logger("[BOOT] Timer done. Starting Navigation.");
+        void performNavigation(String os) const {
+            _logger("[BOOT] Navigating Menu...");
 
             if (os == OS_NAME_SECONDARY) {
                 for (int i = 0; i < GRUB_SECONDARY_OS_POSITION - 1; i++) {
-                    _logger("[BOOT] KEY_DOWN (" + String(i+1) + ")");
                     _kb->pressKey(KEY_DOWN);
-                    delay(150);
-                    _kb->releaseAll();
-                    delay(350);
+                    delay(150); _kb->releaseAll(); delay(350);
                 }
-
-                _logger("[BOOT] KEY_ENTER");
                 delay(500);
                 _kb->pressKey(KEY_ENTER);
-                delay(150);
-                _kb->releaseAll();
-
+                delay(150); _kb->releaseAll();
             } else {
-                _logger("[BOOT] KEY_ENTER (Default)");
+                // Ubuntu Logic
                 _kb->pressKey(KEY_ENTER);
-                delay(100);
-                _kb->releaseAll();
+                delay(100); _kb->releaseAll();
             }
-
-            _logger("[BOOT] Sequence Complete");
+            _logger("[BOOT] Done");
         }
 };
 #endif

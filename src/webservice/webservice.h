@@ -6,7 +6,7 @@
 #include <WiFiUdp.h>
 #include "../../src/config/config.h"
 
-typedef void (*WakeCallback)(String os);
+typedef void (*WakeCallback)(String os, String strategy);
 typedef void (*ShutDownCallback)();
 
 class WebService {

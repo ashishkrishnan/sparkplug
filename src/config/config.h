@@ -16,6 +16,7 @@ static const char* OS_NAME_SECONDARY = LOCAL_OS_NAME_SECONDARY;
 static constexpr int BOOT_DELAY_IN_MS = LOCAL_BOOT_DELAY_IN_MS;
 static constexpr int GRUB_SECONDARY_OS_POSITION = LOCAL_GRUB_SECONDARY_OS_POSITION;
 static const char* TARGET_PC_IP_ADDRESS = LOCAL_TARGET_PC_IP_ADDRESS;
+static const char* DEFAULT_BOOT_STRATEGY = "standard";
 
 // ESP Configuration
 static constexpr uint8_t PIN_RELAY = 4;

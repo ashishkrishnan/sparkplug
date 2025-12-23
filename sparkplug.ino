@@ -25,7 +25,7 @@ WebService web_service;
 
 #ifndef RUN_TESTS_ON_BOOT
 
-void executeWake(String os) {
+void executeWake(String os, String strategy) {
     if(!safety.isSafeToOperate()) {
         web_service.logEvent(
             "[Critical] Wake Aborted. Thermal/Safety checked failed (>=" + String(MAX_TEMP_C) + ") degrees");
@@ -37,8 +37,7 @@ void executeWake(String os) {
 
     web_service.logEvent("[Wake] Waiting " + String(BOOT_DELAY_IN_MS/1000) + "s for BIOS...");
 
-    // Use the pointer
-    bootSystem->selectOS(os);
+    bootSystem->selectOS(os, strategy);
 
     web_service.logEvent("[Wake] Success. Selected " + os);
 }
@@ -57,7 +56,6 @@ void executeShutdown() {
 
 void setup() {
     Serial.begin(115200);
-    // --- CRITICAL FIX: INIT USB HERE ---
     hwKb.init();
 
     delay(2000);
@@ -68,7 +66,6 @@ void setup() {
     Serial.println("--- TESTS COMPLETE ---");
     while(1) delay(1000);
 #else
-    // Production Setup
     web_service.logEvent("[Sparkplug] Starting system");
 
     power.setup();
