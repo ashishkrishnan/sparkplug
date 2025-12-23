@@ -6,10 +6,6 @@ class IKeyboard {
     public:
         virtual ~IKeyboard() = default;
 
-        virtual void begin() = 0;
-
-        virtual void end() = 0;
-
         virtual void pressKey(uint8_t key) = 0;
 
         virtual void releaseAll() = 0;
