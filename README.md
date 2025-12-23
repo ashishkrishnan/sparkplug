@@ -11,6 +11,7 @@
   <p>
     <a href="#why">Why?</a> •
     <a href="#capabilities">Capabilities</a> •
+    <a href="#api">API</a> •
     <a href="#hardware">Hardware</a> •
     <a href="#wiring">Wiring</a> •
     <a href="#installation">Installation</a>
@@ -24,61 +25,49 @@ Sparkplug sits inside your computer case, connected to the motherboard's USB and
 
 Unlike standard Wake-on-LANs which are unreliable, mostly due to driver-os conflicts and hardware restrictions, the Sparkplug hooks into the motherboard providing **state awareness**, **thermal safety (overheat protection)**, and **hardware-level keyboard emulation** for navigating GRUB/Boot Managers.
 
-Rest APIs:
-<br>*Wake up*
-<br> `POST/GET http://<sparkplug ip>/wake` (default os)
-<br>*<br> if you have a dual boot*
-<br> `POST/GET http://<sparkplug ip>/wake?os=windows`
-<br> `POST/GET  http://<sparkplug ip>/wake?os=ubuntu`
-
-<br>*Shutdown* : <br>`POST/GET http://<sparkplug ip>/shutdown`
-
-<br>*Health* :<br>`GET http://<sparkplug ip>/health`
-
-<br> Note: API auto-refreshes every 20 seconds configurable or call with query parameter `refresh=50`
-
-```json
-{
-  "system": {
-    "status": "online",
-    "uptime_s": 91,
-    "uptime_str": "0h 1m 31s",
-    "server_time": "22-12-2025 10:20:53 PM"
-  },
-  "hardware": {
-    "chip": "ESP32-S3 Rev 2",
-    "free_ram_kb": 223,
-    "total_ram_kb": 317,
-    "temp_c": 36.8
-  },
-  "network": {
-    "ip": "192.168.0.25",
-    "mac": "<mac-address>",
-    "signal_dbm": -60
-  },
-  "logs": [
-    "[Syncing with NTP time ] [Sparkplug] Starting system",
-    "[22-12-2025 10:19:31 PM] [Sparkplug] WebService Starting",
-    "[22-12-2025 10:19:31 PM] [Sparkplug] Service Ready! - All systems go!",
-    "[22-12-2025 10:19:31 PM] [Sparkplug] Boot Complete. Ready."
-  ]
-}
-```
 ---
 
 <a id="capabilities"></a>
 ## 🚀 Capabilities
 
-* **Reliable Wake up on Lan (WoL):** Remotely power on your PC and automatically type the keystrokes to select your OS (e.g., Windows vs. Ubuntu).
-* **Safe Shutdown:** Ensures, triggers are on the power button if the PC is confirmed ON. This prevents accidental power-ups.
-* **Thermal Guard:** Monitors internal case temperature. If the ESP32 exceeds **85°C**, it locks out all controls to prevent hardware damage.
+* **Reliable Wake up on Lan (WoL):** Remotely power on your PC over Wifi, which triggers a relay to power on via the motherboard headers.
+* **Reliable OS selector:** Use predefined keyboard input to navigate your primary or secondary os (e.g ubuntu or windows)
+* **Shutdown:** Ensures, triggers are on the power button if the PC is confirmed ON.
+* **Thermal Guard:** Monitors internal case temperature. If the Sparkplug exceeds **85°C**, it locks out all controls to prevent hardware damage.
+* **Safety protocols:** Prevents any accidental shutdown or wake-ups if Sparkplug detects an ongoing sequence or is in cool down period.
 * **Realtime Health Monitoring**: Provides observability for hardware state and software sequences.
+* **Debug Mode**: Has a debug mode for testing if your motherboard or OS settings are HID compliant.
 
 > [!IMPORTANT] 
 > The OS chooser capability requires ESP32-S3 with Native USB OTG" (On-The-Go) support. 
 > This makes it an ideal case for pretending it to be an HID in order to choose OS. In later milestone, we will make this modular to flash capabilities based on the board.
 
 ---
+<a id="api"></a>
+## APIs:
+#### Wake Up
+`http://<sparkplug>/wake` (default os)
+<br><br> if you have a dual boot
+<br> `http://<sparkplug>/wake?os=windows`
+<br> `http://<sparkplug>/wake?os=ubuntu`
+
+- Use `strategy=aggressive` if HID is disabled during POST (power on self test) for some motherboards.
+- Use `force=true` to wake up during the cool down period (configurable time period after a recent wake/shutdown)
+
+#### Health:
+`http://<sparkplug>/health`
+
+Note: API auto-refreshes every 20 seconds configurable or call with query parameter `refresh=50`
+
+<br>*Debug*: <br>`GET/POST http://<sparkplug>/debug/type?key=a`
+
+Note: Use this if you want to test if the Sparkplug is getting detected as a keyboard.
+
+> [!IMPORTANT]
+> Check [API Documentation](/docs/api-docs.md) for more information
+****
+
+
 <a id="hardware"></a>
 ## 🛠️ Hardware
 
