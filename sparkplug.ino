@@ -19,7 +19,7 @@ Health hwHealth;
 Connectivity network;
 
 Power power(&hwRelay);
-Boot boot(&hwKb);
+Boot* bootSystem;
 Safety safety(&hwHealth);
 WebService web_service;
 
@@ -37,7 +37,8 @@ void executeWake(String os) {
 
     web_service.logEvent("[Wake] Waiting " + String(BOOT_DELAY_IN_MS/1000) + "s for BIOS...");
 
-    boot.selectOS(os);
+    // Use the pointer
+    bootSystem->selectOS(os);
 
     web_service.logEvent("[Wake] Success. Selected " + os);
 }
@@ -56,6 +57,9 @@ void executeShutdown() {
 
 void setup() {
     Serial.begin(115200);
+    // --- CRITICAL FIX: INIT USB HERE ---
+    hwKb.init();
+
     delay(2000);
 
 #ifdef RUN_TESTS_ON_BOOT
@@ -68,6 +72,9 @@ void setup() {
     web_service.logEvent("[Sparkplug] Starting system");
 
     power.setup();
+    bootSystem = new Boot(&hwKb, [](String msg) {
+        web_service.logEvent(msg);
+    });
     network.setupConnectivity();
 
     // Pass the callbacks
