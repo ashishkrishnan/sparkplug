@@ -35,7 +35,7 @@ void executeWake(String os, String strategy) {
     web_service.logEvent("[Wake] Pulsing Relay (Wake)...");
     power.triggerPulse();
 
-    web_service.logEvent("[Wake] Waiting " + String(BOOT_DELAY_IN_MS/1000) + "s for BIOS...");
+    web_service.logEvent("[Wake] Waiting " + String(TIME_TAKEN_TO_REACH_BOOT_MENU/1000) + "s for BIOS...");
 
     bootSystem->selectOS(os, strategy);
 

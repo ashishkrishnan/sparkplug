@@ -20,7 +20,7 @@ public:
         bool force = server.hasArg("force") && server.arg("force") == "true";
         if (bootSystem->isCoolingDown() && !force) {
             long remaining = bootSystem->getCoolDownRemaining();
-            String msg = "Safety Block: Cool-Down Active (" + String(remaining) + "s remaining). Use ?force=true.";
+            String msg = "Safety Check: Cool-Down Active (" + String(remaining) + "s remaining). Use ?force=true.";
             logger.log("[WAKE] Rejected - Cool Down", network.getFormattedTime());
             server.send(429, "text/plain", msg);
             return;
@@ -28,7 +28,7 @@ public:
 
         if (network.isTargetPCAlive(TARGET_PC_IP_ADDRESS) && !force) {
             logger.log("[WAKE] Skipped - Target Online", network.getFormattedTime());
-            server.send(409, "text/plain", "Target is already Online");
+            server.send(409, "text/plain", "Target PC is already Online");
             return;
         }
 
@@ -36,7 +36,7 @@ public:
         String strategy = server.hasArg("strategy") ? server.arg("strategy") : DEFAULT_BOOT_STRATEGY;
 
         logger.log("[WAKE] Start [" + os + "] Mode: " + strategy, network.getFormattedTime());
-        server.send(200, "text/plain", "Wake Sequence Started");
+        server.send(200, "text/plain", "Wake Sequence Started for " + os);
 
         if (cb) cb(os, strategy);
     }

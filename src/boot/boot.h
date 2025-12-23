@@ -13,7 +13,7 @@ class Boot {
     private:
         IKeyboard* _kb;
         Logger _logger;
-        bool _isBusy = false;
+        bool _isBusy;
         unsigned long _lastSequenceFinishTime = 0;
 
 
@@ -54,8 +54,8 @@ class Boot {
 
     private:
         void performStandardWait() const {
-            _logger("[BOOT] Standard Wait (" + String(BOOT_DELAY_IN_MS) + "ms)");
-            delay(BOOT_DELAY_IN_MS);
+            _logger("[BOOT] Standard Wait (" + String(TIME_TAKEN_TO_REACH_BOOT_MENU) + "ms)");
+            delay(TIME_TAKEN_TO_REACH_BOOT_MENU);
         }
 
         void performAggressiveWait() const {
@@ -63,7 +63,7 @@ class Boot {
             long startTime = millis();
             long lastHeartbeat = 0;
 
-            while (millis() - startTime < BOOT_DELAY_IN_MS) {
+            while (millis() - startTime < TIME_TAKEN_TO_REACH_BOOT_MENU) {
                 if (millis() - lastHeartbeat > 2000) {
                     _kb->pressKey(KEY_SHIFT);
                     delay(50);
@@ -86,7 +86,6 @@ class Boot {
                 _kb->pressKey(KEY_ENTER);
                 delay(150); _kb->releaseAll();
             } else {
-                // Ubuntu Logic
                 _kb->pressKey(KEY_ENTER);
                 delay(100); _kb->releaseAll();
             }
