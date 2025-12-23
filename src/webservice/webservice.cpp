@@ -4,10 +4,11 @@
 #include "../../src/connectivity/connectivity.h"
 #include "WebServer.h"
 #include "WiFiUdp.h"
-
+#include "../../src/boot/usbkeyboard.h"
 #include "webservice.h"
 
 extern Connectivity network;
+extern USBKeyboard hwKb;
 
 WebService::WebService() : server(HTTP_PORT) {
     // Constructor initializes server port
@@ -134,10 +135,43 @@ void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
     server.on("/shutdown", HTTP_ANY, [this](){ handleShutdown(); });
     server.on("/health", HTTP_GET, [this](){ handleHealth(); });
 
+    server.on("/debug/type", HTTP_GET, [this]() { debugTyping(); });
+
     server.begin();
     Udp.begin(WOL_PORT);
 
     logEvent("[SparkPlug] Service Ready! - All systems go!");
+}
+
+void WebService::debugTyping() {
+    if (!server.hasArg("key")) {
+        server.send(400, "text/plain", "Missing 'key'");
+        return;
+    }
+
+    String keyName = server.arg("key");
+    keyName.toLowerCase();
+    uint8_t keyCode = 0;
+
+    if (keyName == "shift") keyCode = KEY_SHIFT;
+    else if (keyName == "enter") keyCode = KEY_ENTER;
+    else if (keyName == "esc") keyCode = KEY_ESCAPE;
+    else if (keyName == "backspace") keyCode = KEY_BACK;
+    else if (keyName == "win") keyCode = KEY_GUI;
+    else if (keyName == "up") keyCode = KEY_UP;
+    else if (keyName == "down") keyCode = KEY_DOWN;
+    else if (keyName == "left") keyCode = KEY_LEFT;
+    else if (keyName == "right") keyCode = KEY_RIGHT;
+    else if (keyName.length() == 1) keyCode = keyName.charAt(0);
+
+    if (keyCode != 0) {
+        hwKb.pressKey(keyCode);
+        delay(100);
+        hwKb.releaseAll();
+        server.send(200, "text/plain", "Typed: " + keyName);
+    } else {
+        server.send(400, "text/plain", "Unknown Key");
+    }
 }
 
 void WebService::handleWebAPILoop() {

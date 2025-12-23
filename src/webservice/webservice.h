@@ -29,6 +29,7 @@ private:
     void handleWake();
     void handleShutdown();
     void checkWoL();
+    void debugTyping();
 
 public:
     // Constructor
