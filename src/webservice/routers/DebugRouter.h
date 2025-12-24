@@ -22,6 +22,8 @@ public:
         else if (keyName == "win") keyCode = KEY_GUI;
         else if (keyName == "down") keyCode = KEY_DOWN;
         else if (keyName == "up") keyCode = KEY_UP;
+        else if (keyName == "left") keyCode = KEY_LEFT;
+        else if (keyName == "right") keyCode = KEY_RIGHT;
         else if (keyName.length() == 1) keyCode = keyName.charAt(0);
 
         if (keyCode != 0) {
