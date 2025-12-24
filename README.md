@@ -39,7 +39,7 @@ Unlike standard Wake-on-LANs which are unreliable, mostly due to driver-os confl
 * **Debug Mode**: Has a debug mode for testing if your motherboard or OS settings are HID compliant.
 
 > [!IMPORTANT] 
-> The OS chooser capability requires ESP32-S3 with Native USB OTG" (On-The-Go) support. 
+> The OS selector capability requires ESP32-S3 with Native USB OTG" (On-The-Go) support. 
 > This makes it an ideal case for pretending it to be an HID in order to choose OS. In later milestone, we will make this modular to flash capabilities based on the board.
 
 ---

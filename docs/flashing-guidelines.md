@@ -5,6 +5,8 @@ Note: A script to flash via CLI is WIP.
 ### Step 1: Configuration
 Edit `src/local.h` to match your network:
 
+##### User defined
+
 ```cpp
 static const char* LOCAL_WIFI_SSID = "SSID";
 static const char* LOCAL_WIFI_PASSWORD = "foo-bar-password";
@@ -21,7 +23,27 @@ static const char* LOCAL_TARGET_PC_IP_ADDRESS = "192.168.1.7";
 const char* LOCAL_TIME_ZONE = "IST-5:30"; // e.g "IST-5:30" which is Asia/Kolkata
 ```
 > [!IMPORTANT]
-> Routers have an option to permanent reserve DHCP local IP to your devices. Use to ensure that the target PC does have a new ip.
+> Routers have an option to permanent reserve DHCP local IP to your devices. Use to ensure that the target PC does have a new ip after the lease expiry.
+
+##### Advanced
+
+```cpp
+static const char* DEFAULT_BOOT_STRATEGY = "standard"; // or aggressive
+
+// ESP Configuration
+static constexpr uint8_t PIN_RELAY = 4; // GPIO PIN on ESP32 for data
+static const float MAX_TEMP_C = 85.0;
+
+// Web server
+static constexpr int HTTP_PORT = 80;
+static constexpr int MAX_LOGS = 200;
+static constexpr int WOL_PORT = 9;
+
+static const char* NTP_SERVER    = "pool.ntp.org";
+
+static constexpr int REFRESH_INTERVAL_FOR_HEALTH_API_IN_SECONDS = 30;
+constexpr unsigned long POST_BOOT_COOL_DOWN_IN_SECONDS = 60;
+```
 
 ### Manual Flashing via Arduino IDE
 
