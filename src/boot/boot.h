@@ -13,7 +13,7 @@ class Boot {
     private:
         IKeyboard* _kb;
         Logger _logger;
-        bool _isBusy;
+        bool _isBusy = false;
         unsigned long _lastSequenceFinishTime = 0;
 
 
