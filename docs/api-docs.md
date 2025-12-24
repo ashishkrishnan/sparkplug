@@ -1,7 +1,7 @@
 ## APIs docs:
 
 <br>*Wake up*
-<br> `http://<sparkplug ip>/wake` (default os)
+<br> `http://<sparkplug>/wake` (default os)
 
 <br>*<br> if you have a dual boot*
 <br> `http://<sparkplug>/wake?os=windows`
@@ -10,13 +10,13 @@
 <br> `http://<sparkplug>/wake?os=windows&strategy=standard&force=true`
 
 - Use `strategy=aggressive` if HID is disabled or ignoring key stokes during POST (power on self test) for some motherboards.
-- Use `force=true` to wake up during the cool down period (configurable time period after a recent wake/shutdown)
+- Use `force=true` to wake up during the cooldown period (configurable time period after a recent wake/shutdown)
 
 <br>*Shutdown* : <br>`http://<sparkplug>/shutdown`
 
 <br>*Health* :<br>`http://<sparkplug>/health`
 
-Note: API auto-refreshes every 20 seconds configurable or call with query parameter `refresh=50`
+Note: API auto-refreshes every 30 seconds configurable or call with query parameter `refresh=50`
 
 ```json
 {

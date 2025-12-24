@@ -20,10 +20,10 @@ static constexpr int LOCAL_GRUB_SECONDARY_OS_POSITION = 4;
 
 static const char* LOCAL_TARGET_PC_IP_ADDRESS = "192.168.1.7";
 
-const char* LOCAL_TIME_ZONE = "IST-5:30"; // e.g "IST-5:30" which is Asia/Kolkata
+static const char* LOCAL_TIME_ZONE = "IST-5:30"; // e.g "IST-5:30" which is Asia/Kolkata
 ```
 > [!IMPORTANT]
-> Routers have an option to permanent reserve DHCP local IP to your devices. Use to ensure that the target PC does have a new ip after the lease expiry.
+> Routers have an option to permanently reserve DHCP local IP to your devices. Use to ensure that the target PC does have a new ip after the lease expiry.
 
 ##### Advanced
 
@@ -117,4 +117,3 @@ Because you are using the **N8R8** (8MB Flash / 8MB OPI PSRAM) version of the S3
 5. Click on Compile
 
 6. start uploading
-

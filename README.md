@@ -5,7 +5,7 @@
   <h1>Sparkplug</h1>
 
   <p>
-    <strong>An internal PC controller built on the ESP32-S3.</strong>
+    <strong>An internal PC controller built on the ESP32-S3 for your homelab.</strong>
   </p>
 
   <p>
@@ -30,17 +30,17 @@ Unlike standard Wake-on-LANs which are unreliable, mostly due to driver-os confl
 <a id="capabilities"></a>
 ## 🚀 Capabilities
 
-* **Reliable Wake up on Lan (WoL):** Remotely power on your PC over Wifi, which triggers a relay to power on via the motherboard headers.
+* **Reliable Wake-on-LAN (WoL):** Remotely power on your PC over Wifi (WLAN), which triggers a relay to power on via the motherboard headers.
 * **Reliable OS selector:** Use predefined keyboard input to navigate your primary or secondary os (e.g ubuntu or windows)
-* **Shutdown:** Ensures, triggers are on the power button if the PC is confirmed ON.
-* **Thermal Guard:** Monitors internal case temperature. If the Sparkplug exceeds **85°C**, it locks out all controls to prevent hardware damage.
-* **Safety protocols:** Prevents any accidental shutdown or wake-ups if Sparkplug detects an ongoing sequence or is in cool down period.
+* **Shutdown:** Safely shuts down your PC.
+* **Thermal Guard:** Monitors internal temperature. If the Sparkplug exceeds **85°C**, it locks out all controls to prevent hardware damage.
+* **Safety protocols:** Prevents any accidental shutdown or wake-ups if Sparkplug detects an ongoing sequence or is in cooldown period.
 * **Realtime Health Monitoring**: Provides observability for hardware state and software sequences.
 * **Debug Mode**: Has a debug mode for testing if your motherboard or OS settings are HID compliant.
 
 > [!IMPORTANT] 
-> The OS selector capability requires ESP32-S3 with Native USB OTG" (On-The-Go) support. 
-> This makes it an ideal case for pretending it to be an HID in order to choose OS. In later milestone, we will make this modular to flash capabilities based on the board.
+> The OS selector capability requires ESP32-S3 with Native USB OTG (On-The-Go) support. 
+> This makes it an ideal case for pretending it to be an HID in order to choose OS. In a later milestone, we will make this modular to flash capabilities based on the board.
 
 ---
 <a id="api"></a>
@@ -52,14 +52,17 @@ Unlike standard Wake-on-LANs which are unreliable, mostly due to driver-os confl
 <br> `http://<sparkplug>/wake?os=ubuntu`
 
 - Use `strategy=aggressive` if HID is disabled during POST (power on self test) for some motherboards.
-- Use `force=true` to wake up during the cool down period (configurable time period after a recent wake/shutdown)
+- Use `force=true` to wake up during the cooldown period (configurable time period after a recent wake/shutdown)
+
+#### Shutdown
+`http://<sparkplug>/shutdown`
 
 #### Health:
 `http://<sparkplug>/health`
 
-Note: API auto-refreshes every 20 seconds configurable or call with query parameter `refresh=50`
+Note: API auto-refreshes every 30 seconds configurable or call with query parameter `refresh=50`
 
-<br>*Debug*: <br>`GET/POST http://<sparkplug>/debug/type?key=a`
+<br>*Debug*: <br>`http://<sparkplug>/debug/type?key=a`
 
 Note: Use this if you want to test if the Sparkplug is getting detected as a keyboard.
 
@@ -122,23 +125,23 @@ Edit `src/local.h` to match your network:
 
 ```cpp
 // Wifi setup
-WIFI_SSID     = "YOUR_WIFI_NAME";
-WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
+static const char* LOCAL_WIFI_SSID     = "YOUR_WIFI_NAME";
+static const char* LOCAL_WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
 
 // Target PC Configuration
-LOCAL_OS_NAME_PRIMARY = "ubuntu";
-LOCAL_OS_NAME_SECONDARY = "windows";
+static const char* LOCAL_OS_NAME_PRIMARY = "ubuntu";
+static const char* LOCAL_OS_NAME_SECONDARY = "windows";
 
 // order in the grub menu
-LOCAL_GRUB_SECONDARY_OS_POSITION = 4 
+static constexpr int LOCAL_GRUB_SECONDARY_OS_POSITION = 4;
 
 // LAN IP of your PC
-LOCAL_TARGET_PC_IP_ADDRESS  = "192.168.1.100"; 
+static const char* LOCAL_TARGET_PC_IP_ADDRESS  = "192.168.1.100";
 
 // Time from Power On -> GRUB Menu
-LOCAL_TIME_TAKEN_TO_REACH_BOOT_MENU   = 12000;
+static constexpr int LOCAL_TIME_TAKEN_TO_REACH_BOOT_MENU   = 9000;
 
-LOCAL_TIME_ZONE = "IST-5:30";
+static const char* LOCAL_TIME_ZONE = "IST-5:30";
 ```
 
 ### Step 2: Manual Flashing via Arduino IDE
@@ -148,11 +151,17 @@ Download Arduino IDE and follow [Instructions](/docs/flashing-guidelines.md) her
 ## Why? ##
 -----------------------
 
-Based on my personal "exhausting" troubleshooting experience with the my ASUS AM5 board and Linux, here is why standard Wake-on-LAN (WoL) is fundamentally unreliable and pushed me to towards a hardware solution:
+For my HomeLabs, I was exploring Wake-on-LAN capability to wake up a Custom built PC (running ubuntu/windows). Idea was to wake it up, do some heavy computation (local models or image processing) and shutdown safely. It is a critical step on my homelab setup to conserve energy for all my future goals.
+ 
+Even for KVM over IP use-cases, a reliable WOL is a necessity.
+
+When I started diving in, it turned out to be a black hole of endless issues.
+
+Based on my personal "exhausting" troubleshooting experience with the ASUS AM5 board (custom configuration) and Linux, here is why standard Wake-on-LAN (WoL) is fundamentally unreliable and pushed me to towards a hardware solution:
 
 #### My Experience:
 
-*   **OS Dependency**: WoL failed because the Linux driver and ASUS BIOS could not agree on power states during shutdown. It consistently went to D3Cold state, even when some of the scripts asked not to. If the OS does not perfectly arm the hardware, the feature fails completely. To my surprise, Windows drivers worked well.
+*   **OS Dependency**: WoL would fail because the Linux driver and ASUS BIOS could not agree on power states during shutdown. It consistently went to D3Cold state, even when some of the scripts asked not to. If the OS does not perfectly arm the hardware, the feature fails completely. To my surprise, Windows drivers worked well.
 
 *   **Blind Operation**: When WoL failed, there was zero feedback or error messaging. The Magic Packet is a strictly one-way signal, making remote diagnosis impossible.
 
@@ -171,4 +180,3 @@ Based on my personal "exhausting" troubleshooting experience with the my ASUS AM
 *   **State Verification**: Unlike WoL, it can actively verify if the machine is actually on or off (via ping) before attempting an action.
 
 *   **Force Reset**: It can simulate a long-press on the power button to hard-reset a frozen machine—something software-based methods simply cannot do.
-
