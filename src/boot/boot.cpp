@@ -8,6 +8,7 @@
 Boot::Boot(IKeyboard *kb, Logger logger) : _kb(kb), _logger(std::move(logger)) {
     _isBusy = false;
     _lastSequenceFinishTime = 0;
+    _state = IDLE;
 }
 
 bool Boot::isBusy() {
@@ -27,7 +28,14 @@ long Boot::getCoolDownRemaining() {
 }
 
 String Boot::getStateName() {
-
+    switch(_state) {
+        case IDLE: return "IDLE";
+        case WAITING_FOR_BOOT: return "WAITING_BIOS";
+        case NAVIGATING: return "NAVIGATING";
+        case SHUTTING_DOWN: return "SHUTTING_DOWN";
+        case COOLING_DOWN: return "COOLING_DOWN";
+        default: return "UNKNOWN";
+    }
 }
 
 void Boot::selectOS(const String &os, const String &strategy) {
