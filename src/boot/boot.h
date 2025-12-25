@@ -54,8 +54,8 @@ class Boot {
 
     private:
         void performStandardWait() const {
-            _logger("[BOOT] Standard Wait (" + String(TIME_TAKEN_TO_REACH_BOOT_MENU) + "ms)");
-            delay(TIME_TAKEN_TO_REACH_BOOT_MENU);
+            _logger("[BOOT] Standard Wait (" + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS) + "ms)");
+            delay(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS);
         }
 
         void performAggressiveWait() const {
@@ -63,7 +63,7 @@ class Boot {
             long startTime = millis();
             long lastHeartbeat = 0;
 
-            while (millis() - startTime < TIME_TAKEN_TO_REACH_BOOT_MENU) {
+            while (millis() - startTime < TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS) {
                 if (millis() - lastHeartbeat > 2000) {
                     _kb->pressKey(KEY_SHIFT);
                     delay(50);

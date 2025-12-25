@@ -139,7 +139,7 @@ static constexpr int LOCAL_GRUB_SECONDARY_OS_POSITION = 4;
 static const char* LOCAL_TARGET_PC_IP_ADDRESS  = "192.168.1.100";
 
 // Time from Power On -> GRUB Menu
-static constexpr int LOCAL_TIME_TAKEN_TO_REACH_BOOT_MENU   = 9000;
+static constexpr int LOCAL_TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS   = 9000;
 
 static const char* LOCAL_TIME_ZONE = "IST-5:30";
 ```

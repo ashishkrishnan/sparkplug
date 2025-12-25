@@ -35,9 +35,9 @@ void executeWake(String os, String strategy) {
     web_service.logEvent("[Wake] Pulsing Relay (Wake)...");
     power.triggerPulse();
 
-    web_service.logEvent("[Wake] Waiting " + String(TIME_TAKEN_TO_REACH_BOOT_MENU/1000) + "s for BIOS...");
+    web_service.logEvent("[Wake] Waiting " + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS/1000) + "s for BIOS...");
 
-    bootSystem->selectOS(os, strategy);
+    bootSystem->startSequence(os, strategy);
 
     web_service.logEvent("[Wake] Success. Selected " + os);
 }
@@ -48,6 +48,7 @@ void executeShutdown() {
     if(safety.isSafeShutdownAllowed()) {
         web_service.logEvent("[Shutdown] Target is ON. Pulsing Relay...");
         power.triggerPulse();
+        bootSystem->startShutdown();
     } else {
         web_service.logEvent("[Shutdown] Target already OFF. Ignored.");
     }
@@ -57,7 +58,6 @@ void executeShutdown() {
 void setup() {
     Serial.begin(115200);
     hwKb.init();
-
     delay(2000);
 
 #ifdef RUN_TESTS_ON_BOOT
@@ -87,5 +87,8 @@ void loop() {
 
     // Handle API requests
     web_service.handleWebAPILoop();
+    if (bootSystem) {
+        bootSystem->update();
+    }
 #endif
 }
