@@ -12,13 +12,11 @@ Boot::Boot(IKeyboard *kb, Logger logger) : _kb(kb), _logger(std::move(logger)) {
 }
 
 bool Boot::isBusy() {
-    return _isBusy;
+    return (_state != IDLE && _state != COOLING_DOWN);
 }
 
 bool Boot::isCoolingDown() {
-    if (_isBusy) return false;
-    unsigned long elapsed = (millis() - _lastSequenceFinishTime) / 1000;
-    return (elapsed < POST_BOOT_COOL_DOWN_IN_SECONDS);
+    return (_state == COOLING_DOWN);
 }
 
 long Boot::getCoolDownRemaining() {
