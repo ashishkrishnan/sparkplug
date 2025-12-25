@@ -11,7 +11,7 @@ Edit `src/local.h` to match your network:
 static const char* LOCAL_WIFI_SSID = "SSID";
 static const char* LOCAL_WIFI_PASSWORD = "foo-bar-password";
 
-static constexpr int LOCAL_TIME_TAKEN_TO_REACH_BOOT_MENU = 9000;
+static constexpr int LOCAL_TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS = 9000;
 
 static const char* LOCAL_OS_NAME_PRIMARY = "ubuntu";
 static const char* LOCAL_OS_NAME_SECONDARY = "windows";
