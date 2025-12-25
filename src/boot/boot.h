@@ -33,6 +33,7 @@ class Boot {
 private:
     IKeyboard* _kb;
     Logger _logger;
+    BootState _state = IDLE;
 
     // TODO(ak) - to be deprecated
     bool _isBusy = false;
