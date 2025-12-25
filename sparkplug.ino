@@ -37,7 +37,7 @@ void executeWake(String os, String strategy) {
 
     web_service.logEvent("[Wake] Waiting " + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS/1000) + "s for BIOS...");
 
-    bootSystem->startSequence(os, strategy);
+    bootSystem->selectOS(os, strategy);
 
     web_service.logEvent("[Wake] Success. Selected " + os);
 }
@@ -48,7 +48,6 @@ void executeShutdown() {
     if(safety.isSafeShutdownAllowed()) {
         web_service.logEvent("[Shutdown] Target is ON. Pulsing Relay...");
         power.triggerPulse();
-        bootSystem->startShutdown();
     } else {
         web_service.logEvent("[Shutdown] Target already OFF. Ignored.");
     }
@@ -87,8 +86,5 @@ void loop() {
 
     // Handle API requests
     web_service.handleWebAPILoop();
-    if (bootSystem) {
-        bootSystem->update();
-    }
 #endif
 }
