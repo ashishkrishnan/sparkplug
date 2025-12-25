@@ -26,6 +26,10 @@ long Boot::getCoolDownRemaining() {
     return POST_BOOT_COOL_DOWN_IN_SECONDS - elapsed;
 }
 
+String Boot::getStateName() {
+
+}
+
 void Boot::selectOS(const String &os, const String &strategy) {
     if (_isBusy) return;
     _isBusy = true;
@@ -42,6 +46,18 @@ void Boot::selectOS(const String &os, const String &strategy) {
 
     _isBusy = false;
     _lastSequenceFinishTime = millis();
+}
+
+void Boot::startSequence(String os, String strategy) {
+
+}
+
+void Boot::startShutdown() {
+
+}
+
+void Boot::update() {
+
 }
 
 void Boot::performStandardWait() const {
@@ -87,6 +103,10 @@ void Boot::performNavigation(String os) const {
         _kb->releaseAll();
     }
     _logger("[BOOT] Done");
+}
+
+void Boot::performNavigation() {
+
 }
 
 #endif //BOOT_CPP_H
