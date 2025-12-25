@@ -6,6 +6,29 @@
 
 typedef std::function<void(String)> Logger;
 
+enum BootState {
+    /**
+     * Waiting for commands.
+     */
+    IDLE,
+    /**
+     * A wake command was received. It's waiting for POST and bootloader to show up.
+     */
+    WAITING_FOR_BOOT,
+    /**
+     * The OS is being selected (primary or secondary)
+     */
+    NAVIGATING,
+    /**
+     * A shutdown command was received.
+     */
+    SHUTTING_DOWN,
+    /**
+     * A cool-down period after a successful wake or shutdown.
+     */
+    COOLING_DOWN
+};
+
 class Boot {
 private:
     IKeyboard* _kb;
