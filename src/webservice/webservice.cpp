@@ -1,7 +1,7 @@
 #include "webservice.h"
 #include "../../src/config/config.h"
 #include "../../src/connectivity/connectivity.h"
-#include "../../src/boot/usbkeyboard.h"
+#include "../boot/keyboard/usbkeyboard.h"
 #include "../../src/boot/boot.h"
 
 #include "Routers/HealthRouter.h"
