@@ -68,7 +68,9 @@ void Boot::startSequence(String os, String strategy) {
 }
 
 void Boot::startShutdown() {
-
+    _state = SHUTTING_DOWN;
+    _stateStartTime = millis();
+    _logger("[SEQ] System Locked for Shutdown...");
 }
 
 void Boot::update() {
@@ -107,7 +109,16 @@ void Boot::update() {
             }
             break;
 
-        case NAVIGATING:
+        case SHUTTING_DOWN:
+            // Intentional 5 second delay before cool down period starts
+            if (timeInState > 5000) {
+                _state = COOLING_DOWN;
+                _stateStartTime = millis();
+                _logger("[SEQ] Shutdown lock released.");
+            }
+            break;
+
+            case NAVIGATING:
             break;
     }
 }
