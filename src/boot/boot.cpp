@@ -30,7 +30,7 @@ void Boot::startSequence(String os, String strategy) {
     _targetOs = os;
     _strategy = strategy;
 
-    _state = WAITING_FOR_BOOT;
+    _state = BOOTING_UP;
     _stateStartTime = millis();
     _lastHeartbeat = millis();
 
@@ -51,7 +51,7 @@ void Boot::update() {
         case IDLE:
             break;
 
-        case WAITING_FOR_BOOT:
+        case BOOTING_UP:
             if (timeInState >= TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS) {
                 _state = NAVIGATING;
                 performNavigation();
