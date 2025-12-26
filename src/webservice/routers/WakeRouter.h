@@ -33,6 +33,13 @@ public:
         }
 
         String os = server.hasArg("os") ? server.arg("os") : OS_NAME_PRIMARY;
+
+        if (os == "primary" || os == OS_NAME_PRIMARY || os == "first" || os == "default") {
+            os = OS_NAME_PRIMARY;
+        } else if (os == "secondary" || os == OS_NAME_SECONDARY || os == "second") {
+            os = OS_NAME_SECONDARY;
+        }
+
         String strategy = server.hasArg("strategy") ? server.arg("strategy") : DEFAULT_BOOT_STRATEGY;
 
         logger.log("[WAKE] Start [" + os + "] Mode: " + strategy, network.getFormattedTime());
