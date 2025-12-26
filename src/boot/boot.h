@@ -39,17 +39,8 @@ private:
     String _targetOs;
     String _strategy;
 
-
-    // TODO(ak) - to be deprecated
-    bool _isBusy = false;
     unsigned long _lastSequenceFinishTime = 0;
 
-    // TODO(ak) - to be deprecated
-    void performStandardWait() const;
-    // TODO(ak) - to be deprecated
-    void performAggressiveWait() const;
-    // TODO(ak) - to be deprecated
-    void performNavigation(String os) const;
     void performNavigation();
 
 public:
@@ -58,10 +49,6 @@ public:
     bool isBusy();
     bool isCoolingDown();
     long getCoolDownRemaining();
-    String getStateName();
-
-    // TODO(ak) to be deprecated
-    void selectOS(const String &os, const String &strategy);
 
     // Async contracts
     void startSequence(String os, String strategy);
