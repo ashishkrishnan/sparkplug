@@ -34,6 +34,11 @@ private:
     IKeyboard* _kb;
     Logger _logger;
     BootState _state = IDLE;
+    unsigned long _stateStartTime = 0;
+    unsigned long _lastHeartbeat = 0;
+    String _targetOs;
+    String _strategy;
+
 
     // TODO(ak) - to be deprecated
     bool _isBusy = false;
