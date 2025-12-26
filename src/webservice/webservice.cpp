@@ -73,7 +73,7 @@ void WebService::checkWoL() {
     if (size == 102) {
         Udp.read(packetBuffer, 102);
         if (packetBuffer[0] == 0xFF) {
-            logger.log("[Wake] WoL Packet Received", network.getFormattedTime());
+            logger.log("[WAKE] WoL Packet Received", network.getFormattedTime());
             if (!isThermalUnsafe() && wakeCb) {
                 // Wake Ubuntu (Default) with Default Strategy
                 wakeCb(OS_NAME_PRIMARY, DEFAULT_BOOT_STRATEGY);

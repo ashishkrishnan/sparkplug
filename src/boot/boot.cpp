@@ -40,7 +40,7 @@ void Boot::startSequence(String os, String strategy) {
 void Boot::startShutdown() {
     _state = SHUTTING_DOWN;
     _stateStartTime = millis();
-    _logger("[SEQ] System Locked for Shutdown...");
+    _logger("[SHUTDOWN] System Locked for Shutdown...");
 }
 
 void Boot::update() {
@@ -84,7 +84,7 @@ void Boot::update() {
             if (timeInState > 5000) {
                 _state = COOLING_DOWN;
                 _stateStartTime = millis();
-                _logger("[SEQ] Shutdown lock released.");
+                _logger("[SHUTDOWN] Shutdown lock released.");
             }
             break;
 
@@ -108,6 +108,7 @@ void Boot::performNavigation() {
         _kb->pressKey(KEY_ENTER);
         delay(100); _kb->releaseAll();
     }
+    _logger("[BOOT] Success. Selected " + _targetOs);
 }
 
 #endif //BOOT_CPP_H

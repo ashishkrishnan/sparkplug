@@ -32,14 +32,12 @@ void executeWake(String os, String strategy) {
         return;
     }
 
-    web_service.logEvent("[Wake] Pulsing Relay (Wake)...");
+    web_service.logEvent("[WAKE] Pulsing Relay (Wake)...");
     power.triggerPulse();
 
-    web_service.logEvent("[Wake] Waiting " + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS/1000) + "s for BIOS...");
+    web_service.logEvent("[WAKE] Waiting " + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS/1000) + "s for BIOS...");
 
     bootSystem->startSequence(os, strategy);
-
-    web_service.logEvent("[Wake] Success. Selected " + os);
 }
 
 void executeShutdown() {
