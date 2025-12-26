@@ -12,9 +12,9 @@ enum BootState {
      */
     IDLE,
     /**
-     * A wake command was received. It's waiting for POST and bootloader to show up.
+     * A wake command was received. It's waiting for POST to finish and bootloader to show up.
      */
-    WAITING_FOR_BOOT,
+    BOOTING_UP,
     /**
      * The OS is being selected (primary or secondary)
      */
