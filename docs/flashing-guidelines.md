@@ -2,31 +2,37 @@
 
 Note: A script to flash via CLI is WIP.
 
-### Step 1: Configuration
-Edit `src/local.h` to match your network:
+### Step 1: Wifi Configuration
 
-##### User defined
-
+Edit `src/wifi/wifi.h` to match your network:
 ```cpp
-static const char* LOCAL_WIFI_SSID = "SSID";
-static const char* LOCAL_WIFI_PASSWORD = "foo-bar-password";
-
-static constexpr int LOCAL_TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS = 9000;
-
-static const char* LOCAL_OS_NAME_PRIMARY = "ubuntu";
-static const char* LOCAL_OS_NAME_SECONDARY = "windows";
-
-static constexpr int LOCAL_GRUB_SECONDARY_OS_POSITION = 4;
-
-static const char* LOCAL_TARGET_PC_IP_ADDRESS = "192.168.1.7";
-
-static const char* LOCAL_TIME_ZONE = "IST-5:30"; // e.g "IST-5:30" which is Asia/Kolkata
+static const char* LOCAL_WIFI_SSID = "<Your Wifi SSID>";
+static const char* SECRET_WIFI_PASSWORD = "<Your Wifi Password>";
 ```
+
+### Step 2: Configure & review your User & Advanced configurations
+Edit `src/config/config.h` to match your network:
+
+##### User Defined
+```cpp
+// Configure your host name if you would like
+static const char* HOSTNAME = "sparkplug";
+
+// Set your locale
+static const char* TIME_ZONE     = "IST-5:30"; // POSIX timezone for Asia/Kolkata
+
+// Your target PC Config
+static const char* OS_NAME_PRIMARY = "ubuntu";
+static const char* OS_NAME_SECONDARY = "windows";
+static constexpr int TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS = 19000;
+static constexpr int GRUB_SECONDARY_OS_POSITION = 5;
+static const char* TARGET_PC_IP_ADDRESS = "192.168.0.10";
+```
+
 > [!IMPORTANT]
 > Routers have an option to permanently reserve DHCP local IP to your devices. Use to ensure that the target PC does have a new ip after the lease expiry.
 
 ##### Advanced
-
 ```cpp
 static const char* DEFAULT_BOOT_STRATEGY = "standard"; // or aggressive
 
@@ -42,10 +48,10 @@ static constexpr int WOL_PORT = 9;
 static const char* NTP_SERVER    = "pool.ntp.org";
 
 static constexpr int REFRESH_INTERVAL_FOR_HEALTH_API_IN_SECONDS = 30;
-constexpr unsigned long POST_BOOT_COOL_DOWN_IN_SECONDS = 60;
+constexpr unsigned long COOLDOWN_PERIOD_IN_SECONDS = 60;
 ```
 
-### Manual Flashing via Arduino IDE
+### Step 3: Manual Flashing via Arduino IDE
 
 #### 1\. Setup Arduino IDE
 
