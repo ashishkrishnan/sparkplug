@@ -1,4 +1,4 @@
-#include "src/boot/usbkeyboard.h"
+#include "src/boot/keyboard/usbkeyboard.h"
 #include "src/power/relay.h"
 #include "src/safety/health.h"
 #include "src/power/power.h"

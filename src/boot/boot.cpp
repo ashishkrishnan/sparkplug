@@ -3,7 +3,7 @@
 
 #include "boot.h"
 #include "../config/config.h"
-#include "usbkeyboard.h"
+#include "keyboard/usbkeyboard.h"
 
 Boot::Boot(IKeyboard *kb, Logger logger) : _kb(kb), _logger(std::move(logger)) {
     _lastSequenceFinishTime = 0;

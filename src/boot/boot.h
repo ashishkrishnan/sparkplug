@@ -1,7 +1,7 @@
 #ifndef BOOT_H
 #define BOOT_H
 
-#include "IKeyboard.h"
+#include "keyboard/IKeyboard.h"
 #include <functional>
 
 typedef std::function<void(String)> Logger;

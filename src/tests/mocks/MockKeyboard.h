@@ -1,7 +1,7 @@
 #ifndef MOCKKEYBOARD_H
 #define MOCKKEYBOARD_H
 #include <Arduino.h>
-#include "../src/boot/IKeyboard.h"
+#include "../../boot/keyboard/IKeyboard.h"
 
 class MockKeyboard : public IKeyboard {
     public:

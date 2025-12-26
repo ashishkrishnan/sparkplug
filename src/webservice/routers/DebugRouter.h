@@ -2,7 +2,7 @@
 #define DEBUG_ROUTER_H
 
 #include <WebServer.h>
-#include "../../boot/usbkeyboard.h"
+#include "../../boot/keyboard/usbkeyboard.h"
 
 class DebugRouter {
 public:
