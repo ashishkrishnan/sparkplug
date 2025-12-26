@@ -120,31 +120,33 @@ Connect the 9-pin internal cable to the ESP32 port labeled **USB** (or OTG).
 
 Note: A script to flash via CLI is WIP.
 
-### Step 1: Configuration
-Edit `src/local.h` to match your network:
+### Step 1: Your Wifi Name & Password
+Edit `src/config/wifi.h` to match your network:
 
 ```cpp
-// Wifi setup
-static const char* LOCAL_WIFI_SSID     = "YOUR_WIFI_NAME";
-static const char* LOCAL_WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
-
-// Target PC Configuration
-static const char* LOCAL_OS_NAME_PRIMARY = "ubuntu";
-static const char* LOCAL_OS_NAME_SECONDARY = "windows";
-
-// order in the grub menu
-static constexpr int LOCAL_GRUB_SECONDARY_OS_POSITION = 4;
-
-// LAN IP of your PC
-static const char* LOCAL_TARGET_PC_IP_ADDRESS  = "192.168.1.100";
-
-// Time from Power On -> GRUB Menu
-static constexpr int LOCAL_TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS   = 9000;
-
-static const char* LOCAL_TIME_ZONE = "IST-5:30";
+static const char* LOCAL_WIFI_SSID = "<Your Wifi SSID>";
+static const char* SECRET_WIFI_PASSWORD = "<Your Wifi Password>";
 ```
 
-### Step 2: Manual Flashing via Arduino IDE
+### Step 2: Configure & review your User & Advanced configurations
+Edit `src/config/config.h` to match your network:
+
+```cpp
+// Configure your host name
+static const char* HOSTNAME = "sparkplug";
+
+// Set your locale
+static const char* TIME_ZONE     = "IST-5:30"; // POSIX timezone for Asia/Kolkata
+
+// Your target PC Config
+static const char* OS_NAME_PRIMARY = "ubuntu";
+static const char* OS_NAME_SECONDARY = "windows";
+static constexpr int TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS = 19000;
+static constexpr int GRUB_SECONDARY_OS_POSITION = 5;
+static const char* TARGET_PC_IP_ADDRESS = "192.168.0.10";
+```
+
+### Step 3: Manual Flashing via Arduino IDE
 Download Arduino IDE and follow [Instructions](/docs/flashing-guidelines.md) here.
 
 <a id="why"></a>

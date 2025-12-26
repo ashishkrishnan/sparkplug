@@ -21,7 +21,7 @@ bool Boot::isCoolingDown() {
 long Boot::getCoolDownRemaining() {
     if (!isCoolingDown()) return 0;
     unsigned long elapsed = (millis() - _lastSequenceFinishTime) / 1000;
-    return POST_BOOT_COOL_DOWN_IN_SECONDS - elapsed;
+    return COOLDOWN_PERIOD_IN_SECONDS - elapsed;
 }
 
 void Boot::startSequence(String os, String strategy) {
@@ -73,7 +73,7 @@ void Boot::update() {
             break;
 
         case COOLING_DOWN:
-            if (timeInState >= (POST_BOOT_COOL_DOWN_IN_SECONDS * 1000)) {
+            if (timeInState >= (COOLDOWN_PERIOD_IN_SECONDS * 1000)) {
                 _state = IDLE;
                 _logger("[BOOT] System Ready (Idle)");
             }

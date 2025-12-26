@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 #include <Arduino.h>
-#include "local.h"
+#include "wifi.h"
 
 // --------- User settings --------
 
@@ -9,20 +9,23 @@
 static const char* HOSTNAME = "sparkplug";
 
 // Set your locale
-static const char* TIME_ZONE     = LOCAL_TIME_ZONE; // e.g "IST-5:30" which is Asia/Kolkata TODO write/find a library to convert standard timezones into this format.
+static const char* TIME_ZONE     = "IST-5:30"; // Asia/Kolkata TODO write/find a library to convert standard timezones into this format.
 
 // Set your Wifi
 static const char* WIFI_SSID = LOCAL_WIFI_SSID;
-static const char* WIFI_PASS = LOCAL_WIFI_PASSWORD;
+static const char* WIFI_PASS = SECRET_WIFI_PASSWORD;
 
 // Your target PC Config
-static const char* OS_NAME_PRIMARY = LOCAL_OS_NAME_PRIMARY;
-static const char* OS_NAME_SECONDARY = LOCAL_OS_NAME_SECONDARY;
-static constexpr int TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS = LOCAL_TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS;
-static constexpr int GRUB_SECONDARY_OS_POSITION = LOCAL_GRUB_SECONDARY_OS_POSITION;
-static const char* TARGET_PC_IP_ADDRESS = LOCAL_TARGET_PC_IP_ADDRESS;
+static const char* OS_NAME_PRIMARY = "ubuntu";
+static const char* OS_NAME_SECONDARY = "windows";
+static constexpr int TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS = 19000;
+static constexpr int GRUB_SECONDARY_OS_POSITION = 5;
+static const char* TARGET_PC_IP_ADDRESS = "192.168.0.10";
 
 // ---- Advanced Configuration ----
+
+static constexpr int REFRESH_INTERVAL_FOR_HEALTH_API_IN_SECONDS = 30;
+constexpr unsigned long COOLDOWN_PERIOD_IN_SECONDS = 30;
 
 static const char* DEFAULT_BOOT_STRATEGY = "standard";
 
@@ -34,10 +37,6 @@ static const float MAX_TEMP_C = 85.0;
 static constexpr int HTTP_PORT = 80;
 static constexpr int MAX_LOGS = 200;
 static constexpr int WOL_PORT = 9;
-
 static const char* NTP_SERVER    = "pool.ntp.org";
-
-static constexpr int REFRESH_INTERVAL_FOR_HEALTH_API_IN_SECONDS = 30;
-constexpr unsigned long POST_BOOT_COOL_DOWN_IN_SECONDS = 60;
 
 #endif
