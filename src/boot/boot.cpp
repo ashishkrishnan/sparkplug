@@ -55,7 +55,16 @@ void Boot::selectOS(const String &os, const String &strategy) {
 }
 
 void Boot::startSequence(String os, String strategy) {
+    if (_state != IDLE && _state != COOLING_DOWN) return;
 
+    _targetOs = os;
+    _strategy = strategy;
+
+    _state = WAITING_FOR_BOOT;
+    _stateStartTime = millis();
+    _lastHeartbeat = millis();
+
+    _logger("[BOOT] Started Async Wait (" + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS) + "ms)");
 }
 
 void Boot::startShutdown() {
@@ -63,7 +72,61 @@ void Boot::startShutdown() {
 }
 
 void Boot::update() {
+    unsigned long now = millis();
+    unsigned long timeInState = now - _stateStartTime;
 
+    switch (_state) {
+        case IDLE:
+            break;
+
+        case WAITING_FOR_BOOT:
+            if (timeInState >= TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS) {
+                _state = NAVIGATING;
+                performNavigation();
+
+                _state = COOLING_DOWN;
+                _stateStartTime = millis();
+                _logger("[BOOT] Sequence Done. Cooling down.");
+                return;
+            }
+
+            if (_strategy == "aggressive") {
+                if (now - _lastHeartbeat > 2000) {
+                    _kb->pressKey(KEY_SHIFT);
+                    delay(50); // Keep a delay between key presses.
+                    _kb->releaseAll();
+                    _lastHeartbeat = now;
+                }
+            }
+            break;
+
+        case COOLING_DOWN:
+            if (timeInState >= (POST_BOOT_COOL_DOWN_IN_SECONDS * 1000)) {
+                _state = IDLE;
+                _logger("[BOOT] System Ready (Idle)");
+            }
+            break;
+
+        case NAVIGATING:
+            break;
+    }
+}
+
+void Boot::performNavigation() {
+    _logger("[BOOT] Navigating Menu...");
+
+    if (_targetOs == OS_NAME_SECONDARY) {
+        for (int i = 0; i < GRUB_SECONDARY_OS_POSITION - 1; i++) {
+            _kb->pressKey(KEY_DOWN);
+            delay(150); _kb->releaseAll(); delay(350);
+        }
+        delay(500);
+        _kb->pressKey(KEY_ENTER);
+        delay(150); _kb->releaseAll();
+    } else {
+        _kb->pressKey(KEY_ENTER);
+        delay(100); _kb->releaseAll();
+    }
 }
 
 void Boot::performStandardWait() const {
@@ -109,10 +172,6 @@ void Boot::performNavigation(String os) const {
         _kb->releaseAll();
     }
     _logger("[BOOT] Done");
-}
-
-void Boot::performNavigation() {
-
 }
 
 #endif //BOOT_CPP_H
