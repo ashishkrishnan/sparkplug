@@ -15,6 +15,7 @@ private:
     byte packetBuffer[102];
 
     EventLogger logger;
+    bool isThermalUnsafe();
 public:
     Wol();
 
