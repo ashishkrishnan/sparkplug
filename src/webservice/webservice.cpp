@@ -18,12 +18,12 @@ WebService::WebService() : server(HTTP_PORT) {
 }
 
 void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
-    logger.log("[Sparkplug] WebService Starting", network.getFormattedTime());
+    Log.log("[Sparkplug] WebService Starting");
     wakeCb = onWake;
     shutdownCb = onShutdown;
 
     server.on("/health", HTTP_GET, [this]() {
-        HealthRouter::handle(server, network, logger);
+        HealthRouter::handle(server, network);
     });
 
     server.on("/wake", HTTP_ANY, [this, onWake]() {
@@ -31,7 +31,7 @@ void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
             server.send(503, "text/plain", "Thermal Lockout");
             return;
         }
-        WakeRouter::handle(server, bootSystem, network, logger, onWake);
+        WakeRouter::handle(server, bootSystem, network, onWake);
     });
 
     server.on("/shutdown", HTTP_ANY, [this, onShutdown]() {
@@ -39,7 +39,7 @@ void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
             server.send(503, "text/plain", "Thermal Lockout");
             return;
         }
-        ShutdownRouter::handle(server, network, logger, onShutdown);
+        ShutdownRouter::handle(server, network, onShutdown);
     });
 
     server.on("/debug/type", HTTP_GET, [this]() {
@@ -47,7 +47,7 @@ void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
     });
 
     server.begin();
-    logger.log("[Sparkplug] Service Ready! - All systems go!", network.getFormattedTime());
+    Log.log("[Sparkplug] Service Ready! - All systems go!");
 }
 
 void WebService::handleWebAPILoop() {
@@ -55,13 +55,13 @@ void WebService::handleWebAPILoop() {
 }
 
 void WebService::logEvent(String msg) {
-    logger.log(msg, network.getFormattedTime());
+    Log.log(msg);
 }
 
 bool WebService::isThermalUnsafe() {
     float currentTemp = system_info.getInternalTemp();
     if (currentTemp > MAX_TEMP_C) {
-        logger.log("CRITICAL: Temp " + String(currentTemp) + "C exceeds limit!", network.getFormattedTime());
+        Log.log("CRITICAL: Temp " + String(currentTemp) + "C exceeds limit!");
         return true;
     }
     return false;

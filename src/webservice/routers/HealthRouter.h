@@ -5,10 +5,11 @@
 #include "../../connectivity/connectivity.h"
 #include "../../logger/EventLogger.h"
 #include "../../system/systeminfo.h"
+#include "../../time/timeprovider.h"
 
 class HealthRouter {
 public:
-    static void handle(WebServer &server, Connectivity &network, EventLogger &logger) {
+    static void handle(WebServer &server, Connectivity &network) {
         String refresh_interval = String(REFRESH_INTERVAL_FOR_HEALTH_API_IN_SECONDS);
         String refreshArg = server.hasArg("refresh") ? server.arg("refresh") : refresh_interval;
         if (refreshArg.toInt() < 1) refreshArg = refresh_interval;
@@ -24,7 +25,7 @@ public:
         json += "\"status\": \"online\",";
         json += "\"uptime_s\": " + String(millis() / 1000) + ",";
         json += "\"uptime_str\": \"" + system_info.getUptime() + "\",";
-        json += "\"server_time\": \"" + network.getFormattedTime() + "\"";
+        json += "\"server_time\": \"" + time_provider.getFormattedTime() + "\"";
         json += "},";
 
         // Hardware
@@ -42,7 +43,7 @@ public:
         json += "\"signal_dbm\": " + String(rssi);
         json += "},";
 
-        json += "\"logs\": " + logger.getLogsAsJson();
+        json += "\"logs\": " + Log.getLogsAsJson();
 
         json += "}";
 

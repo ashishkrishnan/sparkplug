@@ -9,10 +9,9 @@
 
 class WakeRouter {
 public:
-    static void handle(WebServer &server, Boot *bootSystem, Connectivity &network, EventLogger &logger,
-                       WakeCallback cb) {
+    static void handle(WebServer &server, Boot *bootSystem, Connectivity &network, WakeCallback cb) {
         if (bootSystem->isBusy()) {
-            logger.log("[Wake] Rejected - System Busy", network.getFormattedTime());
+            Log.log("[Wake] Rejected - System Busy", time_provider.getFormattedTime());
             server.send(429, "text/plain", "Busy: Sequence in progress");
             return;
         }
@@ -21,13 +20,13 @@ public:
         if (bootSystem->isCoolingDown() && !force) {
             long remaining = bootSystem->getCoolDownRemaining();
             String msg = "Safety Check: Cool-Down Active (" + String(remaining) + "s remaining). Use ?force=true.";
-            logger.log("[Wake] Rejected - Cool Down", network.getFormattedTime());
+            Log.log("[Wake] Rejected - Cool Down", time_provider.getFormattedTime());
             server.send(429, "text/plain", msg);
             return;
         }
 
         if (network.isTargetPCAlive(TARGET_PC_IP_ADDRESS) && !force) {
-            logger.log("[Wake] Skipped - Target PC Online", network.getFormattedTime());
+            Log.log("[Wake] Skipped - Target PC Online", time_provider.getFormattedTime());
             server.send(409, "text/plain", "Target PC is already Online");
             return;
         }
@@ -42,7 +41,7 @@ public:
 
         String strategy = server.hasArg("strategy") ? server.arg("strategy") : DEFAULT_BOOT_STRATEGY;
 
-        logger.log("[Wake] Start [" + os + "] Mode: " + strategy, network.getFormattedTime());
+        Log.log("[Wake] Start [" + os + "] Mode: " + strategy, time_provider.getFormattedTime());
         server.send(200, "text/plain", "Wake Sequence Started for " + os);
 
         if (cb) cb(os, strategy);
