@@ -5,7 +5,8 @@
 class IConnection {
 public:
     virtual ~IConnection() = default;
-    virtual void setupConnectivity() = 0;
+    virtual void setupWifi() = 0;
+    virtual void setupHostName() = 0;
     virtual void handleConnectivityLoop() = 0;
 
     virtual bool isTargetPCAlive(const char* targetIp) = 0;
@@ -16,7 +17,9 @@ public:
 
 class Connectivity : public IConnection {
 public:
-    void setupConnectivity() override;
+    void setupWifi() override;
+
+    void setupHostName() override;
     void handleConnectivityLoop() override;
 
     bool isTargetPCAlive(const char* targetIp) override;

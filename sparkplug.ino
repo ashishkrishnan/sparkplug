@@ -71,12 +71,12 @@ void setup() {
     Log.log("[Sparkplug] Starting system");
 
     power.setup();
-    network.setupConnectivity();
+    network.setupWifi();
     time_provider.setup();
-
     Log.setTimeProvider([]() -> String {
         return time_provider.getFormattedTime();
     });
+    network.setupHostName();
 
     bootSystem = new Boot(&hwKb);
     wol = new Wol();

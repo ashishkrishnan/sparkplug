@@ -8,11 +8,13 @@
 #include <ArduinoOTA.h>
 #include <ESPping.h>
 
-void Connectivity::setupConnectivity() {
+void Connectivity::setupWifi() {
     WiFi.setHostname(HOSTNAME);
     WiFi.begin(WIFI_SSID, WIFI_PASS);
     while (WiFi.status() != WL_CONNECTED) delay(500);
+}
 
+void Connectivity::setupHostName() {
     MDNS.begin(HOSTNAME);
     ArduinoOTA.setHostname(HOSTNAME);
     ArduinoOTA.begin();
