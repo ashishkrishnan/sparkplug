@@ -3,10 +3,13 @@
 #include <Arduino.h>
 #include <WiFiUdp.h>
 
-#include "logger/EventLogger.h"
+#include "../logger/EventLogger.h"
 
 typedef void (*WakeCallback)(String os, String strategy);
 
+/**
+ * Handles Wake-on-lan functionality. In prior versions of sparkplug, it was present in WebService
+ */
 class Wol {
 private:
     WiFiUDP Udp;

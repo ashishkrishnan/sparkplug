@@ -6,6 +6,7 @@
 #include "src/safety/safety.h"
 #include "src/connectivity/connectivity.h"
 #include "src/webservice/webservice.h"
+#include "src/wakeonlan/wol.h"
 #include <Arduino.h>
 
 #ifdef RUN_TESTS_ON_BOOT
@@ -22,6 +23,7 @@ Power power(&hwRelay);
 Boot* bootSystem = nullptr;
 Safety safety(&hwHealth);
 WebService web_service;
+Wol wol;
 
 #ifndef RUN_TESTS_ON_BOOT
 
@@ -73,6 +75,7 @@ void setup() {
     network.setupConnectivity();
 
     // Pass the callbacks
+    wol.setupWol(executeWake);
     web_service.setupWebAPI(executeWake, executeShutdown);
 
     web_service.logEvent("[Sparkplug] Boot Complete. Ready.");
@@ -82,6 +85,9 @@ void setup() {
 void loop() {
 #ifndef RUN_TESTS_ON_BOOT
     network.handleConnectivityLoop();
+
+    // Handle Wake-on-Lan requests
+    wol.handleWolLoop();
 
     // Handle API requests
     web_service.handleWebAPILoop();
