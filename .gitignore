@@ -3,3 +3,5 @@
 .pio/
 
 platformio.ini
+
+src/config/wifi.h
