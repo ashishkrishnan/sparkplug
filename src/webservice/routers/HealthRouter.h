@@ -43,7 +43,7 @@ public:
         json += "\"network\": {";
         json += "\"ip\": \"" + network.getIpAddress() + "\",";
         json += "\"mac\": \"" + network.getMacAddress() + "\",";
-        json += "\"signal_dbm\": " + String(rssi) + "\",";
+        json += "\"signal_dbm\": " + String(rssi) + ",";
         json += "\"virtual_mac\": {";
         json += "\"" + String(OS_NAME_PRIMARY) + "\": \"" +
                 WolVirtualAddress::getVirtualMacString(mac, VIRTUAL_MAC_HEX_PRIMARY) + "\",";
