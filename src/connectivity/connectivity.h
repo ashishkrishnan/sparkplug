@@ -18,7 +18,6 @@ public:
     virtual uint32_t getFreeHeap() = 0;
     virtual uint32_t getTotalHeap() = 0;
 
-    virtual String getFormattedTime() = 0;
     virtual String getUptime() = 0;
 };
 
@@ -37,7 +36,6 @@ public:
     uint32_t getFreeHeap() override;
     uint32_t getTotalHeap() override;
 
-    String getFormattedTime() override;
     String getUptime() override;
 };
 

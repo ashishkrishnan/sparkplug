@@ -7,7 +7,10 @@
 #include "src/connectivity/connectivity.h"
 #include "src/webservice/webservice.h"
 #include "src/wakeonlan/wol.h"
+#include "src/time/timeprovider.h"
+#include "src/logger/EventLogger.h"
 #include <Arduino.h>
+
 
 #ifdef RUN_TESTS_ON_BOOT
   #include "src/tests/TestRunner.h"
@@ -66,22 +69,28 @@ void setup() {
     Serial.println("--- TESTS COMPLETE ---");
     while(1) delay(1000);
 #else
-    web_service.logEvent("[Sparkplug] Starting system");
+    Log.log("[Sparkplug] Starting system");
 
     power.setup();
+    network.setupConnectivity();
+    time_provider.setup();
+
+    Log.setTimeProvider([]() -> String {
+        return time_provider.getFormattedTime();
+    });
+
     bootSystem = new Boot(&hwKb, [](String msg) {
         web_service.logEvent(msg);
     });
     wol = new Wol([](String msg) {
         web_service.logEvent(msg);
     });
-    network.setupConnectivity();
 
     // Pass the callbacks
     wol->setupWol(executeWake);
     web_service.setupWebAPI(executeWake, executeShutdown);
 
-    web_service.logEvent("[Sparkplug] Boot Complete. Ready.");
+    Log.log("[Sparkplug] Boot Complete. Ready.");
 #endif
 }
 

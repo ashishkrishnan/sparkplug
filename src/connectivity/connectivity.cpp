@@ -7,14 +7,11 @@
 #include <ESPmDNS.h>
 #include <ArduinoOTA.h>
 #include <ESPping.h>
-#include <time.h>
 
 void Connectivity::setupConnectivity() {
     WiFi.setHostname(HOSTNAME);
     WiFi.begin(WIFI_SSID, WIFI_PASS);
     while (WiFi.status() != WL_CONNECTED) delay(500);
-
-    configTzTime(TIME_ZONE, NTP_SERVER);
 
     MDNS.begin(HOSTNAME);
     ArduinoOTA.setHostname(HOSTNAME);
@@ -59,17 +56,6 @@ uint32_t Connectivity::getFreeHeap() {
 
 uint32_t Connectivity::getTotalHeap() {
     return ESP.getHeapSize() / 1024;
-}
-
-String Connectivity::getFormattedTime() {
-    struct tm timeinfo;
-    if(!getLocalTime(&timeinfo)){
-        return "Syncing with NTP time ";
-    }
-
-    char timeStringBuff[30];
-    strftime(timeStringBuff, sizeof(timeStringBuff), "%d-%m-%Y %I:%M:%S %p", &timeinfo);
-    return String(timeStringBuff);
 }
 
 String Connectivity::getUptime() {
