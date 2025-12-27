@@ -1,6 +1,7 @@
 #ifndef CONNECTIVITY_H
 #define CONNECTIVITY_H
 #include <Arduino.h>
+#include <WiFi.h>
 
 class IConnection {
 public:
@@ -12,6 +13,7 @@ public:
     virtual bool isTargetPCAlive(const char* targetIp) = 0;
     virtual String getIpAddress() = 0;
     virtual String getMacAddress() = 0;
+    virtual void getMacBytes(uint8_t* buf);
     virtual long getWifiSignalStrength() = 0;
 };
 
@@ -25,6 +27,8 @@ public:
     bool isTargetPCAlive(const char* targetIp) override;
     String getIpAddress() override;
     String getMacAddress() override;
+    void getMacBytes(uint8_t* buf) override;
+
     long getWifiSignalStrength() override;
 };
 
