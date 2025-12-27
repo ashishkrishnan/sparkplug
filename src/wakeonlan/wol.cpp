@@ -2,10 +2,12 @@
 #define WOL_CPP
 
 #include "wol.h"
-#include "connectivity/connectivity.h"
-#include "safety/safety.h"
+#include "../connectivity/connectivity.h"
+#include "../safety/safety.h"
 
 extern Connectivity network;
+
+Wol::Wol() {}
 
 // TODO(ak) duplicated. Remove from Wol & WebService.
 bool Wol::isThermalUnsafe() {
