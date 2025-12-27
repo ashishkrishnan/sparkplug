@@ -23,10 +23,8 @@ static constexpr int GRUB_SECONDARY_OS_POSITION = 5;
 static const char* TARGET_PC_IP_ADDRESS = "192.168.0.10";
 
 // ---- Advanced Configuration ----
-
 static constexpr int REFRESH_INTERVAL_FOR_HEALTH_API_IN_SECONDS = 30;
 constexpr unsigned long COOLDOWN_PERIOD_IN_SECONDS = 30;
-
 static const char* DEFAULT_BOOT_STRATEGY = "standard";
 
 // ESP Configuration
@@ -35,8 +33,14 @@ static const float MAX_TEMP_C = 85.0;
 
 // Web server
 static constexpr int HTTP_PORT = 80;
+
+// Logger
 static constexpr int MAX_LOGS = 200;
+
+// Wake-on-Lan
 static constexpr int WOL_PORT = 9;
+
+// Time
 static const char* NTP_SERVER    = "pool.ntp.org";
 
 #endif
