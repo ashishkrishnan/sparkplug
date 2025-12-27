@@ -85,7 +85,7 @@ void Boot::update() {
             if (timeInState > 5000) {
                 _state = COOLING_DOWN;
                 _stateStartTime = millis();
-                Log.log("[Shutdown] Shutdown lock released.");
+                Log.log("[Shutdown] Shutdown lock released. Entering Cooldown period");
             }
             break;
 
