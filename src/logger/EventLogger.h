@@ -2,6 +2,7 @@
 #define EVENT_LOGGER_H
 
 #include <Arduino.h>
+#include <functional>
 #include "../config/config.h"
 
 class EventLogger {
@@ -10,41 +11,51 @@ private:
     int logIdx = 0;
     bool wrapped = false;
 
+    std::function<String()> timeProvider = []() { return String("NO SYNC"); };
+
 public:
-    void log(String msg, String timeStr) {
-        String entry = "[" + timeStr + "] " + msg;
-        
-        logs[logIdx] = entry;
-        logIdx++;
-        if (logIdx >= MAX_LOGS) { 
-            logIdx = 0; 
-            wrapped = true; 
-        }
-        Serial.println(entry);
+    void setTimeProvider(std::function<String()> provider) {
+        timeProvider = provider;
     }
 
-    void log(String message) {
-        Serial.println(message);
-        logs[logIdx] = message;
+    void log(String msg, String timeStr) {
+        String entry = "[" + timeStr + "] " + msg;
+
+        logs[logIdx] = entry;
         logIdx++;
         if (logIdx >= MAX_LOGS) {
             logIdx = 0;
             wrapped = true;
         }
+        Serial.println(entry);
+    }
+
+    void log(String message) {
+        String timeString = timeProvider();
+        String entry = "[" + timeString + "] " + message;
+
+        logs[logIdx] = entry;
+        logIdx++;
+        if (logIdx >= MAX_LOGS) {
+            logIdx = 0;
+            wrapped = true;
+        }
+
+        Serial.println(entry);
     }
 
     String getLogsAsJson() {
         String json = "[";
         int count = wrapped ? MAX_LOGS : logIdx;
         int start = wrapped ? logIdx : 0;
-        
-        for(int i=0; i<count; i++) {
+
+        for (int i = 0; i < count; i++) {
             int idx = (start + i) % MAX_LOGS;
             String cleanLog = logs[idx];
             cleanLog.replace("\"", "'"); // Sanitize JSON
-            
+
             json += "\"" + cleanLog + "\"";
-            if(i < count-1) json += ",";
+            if (i < count - 1) json += ",";
         }
         json += "]";
         return json;
