@@ -22,9 +22,9 @@ void Connectivity::handleConnectivityLoop() {
     ArduinoOTA.handle();
 }
 
-bool Connectivity::isTargetPCAlive(const char* targetIp) {
+bool Connectivity::isTargetPCAlive(const char *targetIp) {
     IPAddress addr;
-    if(addr.fromString(targetIp)) {
+    if (addr.fromString(targetIp)) {
         return Ping.ping(addr);
     }
     return false;
@@ -38,37 +38,8 @@ long Connectivity::getWifiSignalStrength() {
     return WiFi.RSSI();
 }
 
-float Connectivity::getInternalTemp() {
-    return temperatureRead();
-}
-
 String Connectivity::getMacAddress() {
     return WiFi.macAddress();
-}
-
-String Connectivity::getChipModel() {
-    return String(ESP.getChipModel()) + " Rev " + String(ESP.getChipRevision());
-}
-
-uint32_t Connectivity::getFreeHeap() {
-    return ESP.getFreeHeap() / 1024;
-}
-
-uint32_t Connectivity::getTotalHeap() {
-    return ESP.getHeapSize() / 1024;
-}
-
-String Connectivity::getUptime() {
-    long totalSec = millis() / 1000;
-    int days = totalSec / 86400;
-    int hours = (totalSec % 86400) / 3600;
-    int mins = (totalSec % 3600) / 60;
-    int secs = totalSec % 60;
-
-    String uptime = "";
-    if(days > 0) uptime += String(days) + "d ";
-    uptime += String(hours) + "h " + String(mins) + "m " + String(secs) + "s";
-    return uptime;
 }
 
 #endif

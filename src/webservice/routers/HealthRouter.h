@@ -4,6 +4,7 @@
 #include <WebServer.h>
 #include "../../connectivity/connectivity.h"
 #include "../../logger/EventLogger.h"
+#include "../../system/systeminfo.h"
 
 class HealthRouter {
 public:
@@ -13,8 +14,8 @@ public:
         if (refreshArg.toInt() < 1) refreshArg = refresh_interval;
 
         long rssi = network.getWifiSignalStrength();
-        uint32_t freeRam = network.getFreeHeap();
-        uint32_t totalRam = network.getTotalHeap();
+        uint32_t freeRam = system_info.getFreeHeap();
+        uint32_t totalRam = system_info.getTotalHeap();
 
         String json = "{";
 
@@ -22,16 +23,16 @@ public:
         json += "\"system\": {";
         json += "\"status\": \"online\",";
         json += "\"uptime_s\": " + String(millis() / 1000) + ",";
-        json += "\"uptime_str\": \"" + network.getUptime() + "\",";
+        json += "\"uptime_str\": \"" + system_info.getUptime() + "\",";
         json += "\"server_time\": \"" + network.getFormattedTime() + "\"";
         json += "},";
 
         // Hardware
         json += "\"hardware\": {";
-        json += "\"chip\": \"" + network.getChipModel() + "\",";
+        json += "\"chip\": \"" + system_info.getChipModel() + "\",";
         json += "\"free_ram_kb\": " + String(freeRam) + ",";
         json += "\"total_ram_kb\": " + String(totalRam) + ",";
-        json += "\"temp_c\": " + String(network.getInternalTemp());
+        json += "\"temp_c\": " + String(system_info.getInternalTemp());
         json += "},";
 
         // Network

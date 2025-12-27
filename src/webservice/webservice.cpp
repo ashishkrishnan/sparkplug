@@ -8,6 +8,7 @@
 #include "Routers/WakeRouter.h"
 #include "Routers/ShutdownRouter.h"
 #include "Routers/DebugRouter.h"
+#include "../../src/system/systeminfo.h"
 
 extern Connectivity network;
 extern USBKeyboard hwKb;
@@ -58,7 +59,7 @@ void WebService::logEvent(String msg) {
 }
 
 bool WebService::isThermalUnsafe() {
-    float currentTemp = network.getInternalTemp();
+    float currentTemp = system_info.getInternalTemp();
     if (currentTemp > MAX_TEMP_C) {
         logger.log("CRITICAL: Temp " + String(currentTemp) + "C exceeds limit!", network.getFormattedTime());
         return true;
