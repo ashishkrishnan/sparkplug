@@ -6,6 +6,7 @@
 #include "../logger/EventLogger.h"
 
 typedef void (*WakeCallback)(String os, String strategy);
+typedef std::function<void(String)> Logger;
 
 /**
  * Handles Wake-on-lan functionality. In prior versions of sparkplug, it was present in WebService
@@ -17,12 +18,12 @@ private:
     // Helper
     byte packetBuffer[102];
 
-    EventLogger logger;
+    Logger _logger;
 
     bool isThermalUnsafe();
 
 public:
-    Wol();
+    Wol(Logger logger);
 
     void setupWol(WakeCallback onWakeUpCallback);
 
