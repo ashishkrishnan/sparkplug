@@ -44,4 +44,8 @@ String Connectivity::getMacAddress() {
     return WiFi.macAddress();
 }
 
+void Connectivity::getMacBytes(uint8_t *buf) {
+    WiFi.macAddress(buf);
+}
+
 #endif
