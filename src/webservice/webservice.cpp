@@ -54,10 +54,6 @@ void WebService::handleWebAPILoop() {
     server.handleClient();
 }
 
-void WebService::logEvent(String msg) {
-    Log.log(msg);
-}
-
 bool WebService::isThermalUnsafe() {
     float currentTemp = system_info.getInternalTemp();
     if (currentTemp > MAX_TEMP_C) {

@@ -4,8 +4,9 @@
 #include "boot.h"
 #include "../config/config.h"
 #include "keyboard/usbkeyboard.h"
+#include "../logger/EventLogger.h"
 
-Boot::Boot(IKeyboard *kb, Logger logger) : _kb(kb), _logger(std::move(logger)) {
+Boot::Boot(IKeyboard *kb) : _kb(kb) {
     _lastSequenceFinishTime = 0;
     _state = IDLE;
 }
@@ -34,13 +35,13 @@ void Boot::startSequence(String os, String strategy) {
     _stateStartTime = millis();
     _lastHeartbeat = millis();
 
-    _logger("[Boot] Started Async Wait (" + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS) + "ms)");
+    Log.log("[Boot] Started Async Wait (" + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS) + "ms)");
 }
 
 void Boot::startShutdown() {
     _state = SHUTTING_DOWN;
     _stateStartTime = millis();
-    _logger("[Shutdown] System Locked for Shutdown...");
+    Log.log("[Shutdown] System Locked for Shutdown...");
 }
 
 void Boot::update() {
@@ -58,7 +59,7 @@ void Boot::update() {
 
                 _state = COOLING_DOWN;
                 _stateStartTime = millis();
-                _logger("[Boot] Sequence Done. Cooling down.");
+                Log.log("[Boot] Sequence Done. Cooling down.");
                 return;
             }
 
@@ -75,7 +76,7 @@ void Boot::update() {
         case COOLING_DOWN:
             if (timeInState >= (COOLDOWN_PERIOD_IN_SECONDS * 1000)) {
                 _state = IDLE;
-                _logger("[Boot] System Ready (Idle)");
+                Log.log("[Boot] System Ready (Idle)");
             }
             break;
 
@@ -84,7 +85,7 @@ void Boot::update() {
             if (timeInState > 5000) {
                 _state = COOLING_DOWN;
                 _stateStartTime = millis();
-                _logger("[Shutdown] Shutdown lock released.");
+                Log.log("[Shutdown] Shutdown lock released.");
             }
             break;
 
@@ -94,7 +95,7 @@ void Boot::update() {
 }
 
 void Boot::performNavigation() {
-    _logger("[Boot] Navigating Menu...");
+    Log.log("[Boot] Navigating Menu...");
 
     if (_targetOs == OS_NAME_SECONDARY) {
         for (int i = 0; i < GRUB_SECONDARY_OS_POSITION - 1; i++) {
@@ -108,7 +109,7 @@ void Boot::performNavigation() {
         _kb->pressKey(KEY_ENTER);
         delay(100); _kb->releaseAll();
     }
-    _logger("[Boot] Success. Selected " + _targetOs);
+    Log.log("[Boot] Success. Selected " + _targetOs);
 }
 
 #endif //BOOT_CPP_H

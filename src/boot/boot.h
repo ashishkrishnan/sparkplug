@@ -4,8 +4,6 @@
 #include "keyboard/IKeyboard.h"
 #include <functional>
 
-typedef std::function<void(String)> Logger;
-
 enum BootState {
     /**
      * Waiting for commands.
@@ -32,7 +30,6 @@ enum BootState {
 class Boot {
 private:
     IKeyboard* _kb;
-    Logger _logger;
     BootState _state = IDLE;
     unsigned long _stateStartTime = 0;
     unsigned long _lastHeartbeat = 0;
@@ -44,7 +41,7 @@ private:
     void performNavigation();
 
 public:
-    Boot(IKeyboard* kb, Logger logger);
+    Boot(IKeyboard* kb);
 
     bool isBusy();
     bool isCoolingDown();

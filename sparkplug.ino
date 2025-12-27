@@ -32,28 +32,27 @@ Wol* wol = nullptr;
 
 void executeWake(String os, String strategy) {
     if(!safety.isSafeToOperate()) {
-        web_service.logEvent(
-            "[CRITICAL] Wake Aborted. Thermal/Safety checked failed (>=" + String(MAX_TEMP_C) + ") degrees");
+        Log.log("[CRITICAL] Wake Aborted. Thermal/Safety checked failed (>=" + String(MAX_TEMP_C) + ") degrees");
         return;
     }
 
-    web_service.logEvent("[Wake] Pulsing Relay (Wake)...");
+    Log.log("[Wake] Pulsing Relay (Wake)...");
     power.triggerPulse();
 
-    web_service.logEvent("[Wake] Waiting " + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS/1000) + "s for BIOS...");
+    Log.log("[Wake] Waiting " + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS/1000) + "s for BIOS...");
 
     bootSystem->startSequence(os, strategy);
 }
 
 void executeShutdown() {
-    web_service.logEvent("[Shutdown] Shutdown Requested.");
+    Log.log("[Shutdown] Shutdown Requested.");
 
     if(safety.isSafeShutdownAllowed()) {
-        web_service.logEvent("[Shutdown] Target PC is ON. Pulsing Relay...");
+        Log.log("[Shutdown] Target PC is ON. Pulsing Relay...");
         power.triggerPulse();
         bootSystem->startShutdown();
     } else {
-        web_service.logEvent("[Shutdown] Target PC already OFF. Ignored.");
+        Log.log("[Shutdown] Target PC already OFF. Ignored.");
     }
 }
 #endif
@@ -79,12 +78,8 @@ void setup() {
         return time_provider.getFormattedTime();
     });
 
-    bootSystem = new Boot(&hwKb, [](String msg) {
-        web_service.logEvent(msg);
-    });
-    wol = new Wol([](String msg) {
-        web_service.logEvent(msg);
-    });
+    bootSystem = new Boot(&hwKb);
+    wol = new Wol();
 
     // Pass the callbacks
     wol->setupWol(executeWake);
