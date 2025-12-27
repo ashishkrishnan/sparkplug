@@ -6,14 +6,15 @@
 #include <utility>
 #include "../safety/safety.h"
 #include "../system/systeminfo.h"
+#include "../logger/EventLogger.h"
 
-Wol::Wol(Logger logger)  : _logger(std::move(logger)) {}
+Wol::Wol() {}
 
 // TODO(ak) duplicated. Remove from Wol & WebService.
 bool Wol::isThermalUnsafe() {
     float currentTemp = system_info.getInternalTemp();
     if (currentTemp > MAX_TEMP_C) {
-        _logger("[CRITICAL] : Temp " + String(currentTemp) + "C exceeds limit!");
+        Log.log("[CRITICAL] : Temp " + String(currentTemp) + "C exceeds limit!");
         return true;
     }
 
@@ -30,7 +31,7 @@ void Wol::handleWolLoop() {
     if (size == 102) {
         Udp.read(packetBuffer, 102);
         if (packetBuffer[0] == 0xFF) {
-            _logger("[WoL] Wake Packet Received");
+            Log.log("[WoL] Wake Packet Received");
             if (!isThermalUnsafe() && onWakeUp) {
                 // Wake Ubuntu (Default) with Default Strategy
                 onWakeUp(OS_NAME_PRIMARY, DEFAULT_BOOT_STRATEGY);

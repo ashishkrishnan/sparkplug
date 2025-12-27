@@ -23,7 +23,5 @@ public:
     void setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown);
 
     void handleWebAPILoop();
-
-    void logEvent(String msg);
 };
 #endif
