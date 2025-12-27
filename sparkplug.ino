@@ -23,7 +23,7 @@ Power power(&hwRelay);
 Boot* bootSystem = nullptr;
 Safety safety(&hwHealth);
 WebService web_service;
-Wol wol;
+Wol* wol = nullptr;
 
 #ifndef RUN_TESTS_ON_BOOT
 
@@ -72,10 +72,13 @@ void setup() {
     bootSystem = new Boot(&hwKb, [](String msg) {
         web_service.logEvent(msg);
     });
+    wol = new Wol([](String msg) {
+        web_service.logEvent(msg);
+    });
     network.setupConnectivity();
 
     // Pass the callbacks
-    wol.setupWol(executeWake);
+    wol->setupWol(executeWake);
     web_service.setupWebAPI(executeWake, executeShutdown);
 
     web_service.logEvent("[Sparkplug] Boot Complete. Ready.");
@@ -87,7 +90,7 @@ void loop() {
     network.handleConnectivityLoop();
 
     // Handle Wake-on-Lan requests
-    wol.handleWolLoop();
+    wol->handleWolLoop();
 
     // Handle API requests
     web_service.handleWebAPILoop();
