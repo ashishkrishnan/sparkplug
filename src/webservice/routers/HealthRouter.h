@@ -6,6 +6,7 @@
 #include "../../logger/EventLogger.h"
 #include "../../system/systeminfo.h"
 #include "../../time/timeprovider.h"
+#include "../../wakeonlan/WolVirtualAddress.h"
 
 class HealthRouter {
 public:
@@ -17,6 +18,8 @@ public:
         long rssi = network.getWifiSignalStrength();
         uint32_t freeRam = system_info.getFreeHeap();
         uint32_t totalRam = system_info.getTotalHeap();
+        uint8_t mac[6];
+        network.getMacBytes(mac);
 
         String json = "{";
 
@@ -40,7 +43,15 @@ public:
         json += "\"network\": {";
         json += "\"ip\": \"" + network.getIpAddress() + "\",";
         json += "\"mac\": \"" + network.getMacAddress() + "\",";
-        json += "\"signal_dbm\": " + String(rssi);
+        json += "\"signal_dbm\": " + String(rssi) + "\",";
+        json += "\"virtual_mac\": {";
+        json += "\"" + String(OS_NAME_PRIMARY) + "\": \"" +
+                WolVirtualAddress::getVirtualMacString(mac, VIRTUAL_MAC_HEX_PRIMARY) + "\",";
+
+        json += "\"" + String(OS_NAME_SECONDARY) + "\": \"" +
+                WolVirtualAddress::getVirtualMacString(mac, VIRTUAL_MAC_HEX_SECONDARY) + "\"";
+
+        json += "}";
         json += "},";
 
         json += "\"logs\": " + Log.getLogsAsJson();

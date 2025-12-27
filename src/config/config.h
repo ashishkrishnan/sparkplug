@@ -23,6 +23,9 @@ static constexpr int GRUB_SECONDARY_OS_POSITION = 5;
 static const char* TARGET_PC_IP_ADDRESS = "192.168.0.10";
 
 // ---- Advanced Configuration ----
+static uint8_t VIRTUAL_MAC_HEX_PRIMARY = 0xAA;
+static uint8_t VIRTUAL_MAC_HEX_SECONDARY = 0xBB;
+
 static constexpr int REFRESH_INTERVAL_FOR_HEALTH_API_IN_SECONDS = 30;
 constexpr unsigned long COOLDOWN_PERIOD_IN_SECONDS = 60;
 static const char* DEFAULT_BOOT_STRATEGY = "standard";
