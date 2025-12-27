@@ -23,6 +23,16 @@ public:
         Serial.println(entry);
     }
 
+    void log(String message) {
+        Serial.println(message);
+        logs[logIdx] = message;
+        logIdx++;
+        if (logIdx >= MAX_LOGS) {
+            logIdx = 0;
+            wrapped = true;
+        }
+    }
+
     String getLogsAsJson() {
         String json = "[";
         int count = wrapped ? MAX_LOGS : logIdx;
@@ -40,4 +50,6 @@ public:
         return json;
     }
 };
+
+extern EventLogger Log;
 #endif
