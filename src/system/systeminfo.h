@@ -6,15 +6,16 @@
 class SystemInfo {
 public:
     String getUptime() {
-        unsigned long now = millis() / 1000;
-        int days = now / 86400;
-        int hours = (now % 86400) / 3600;
-        int minutes = (now % 3600) / 60;
-        int seconds = now % 60;
+        long totalSec = millis() / 1000;
+        int days = totalSec / 86400;
+        int hours = (totalSec % 86400) / 3600;
+        int mins = (totalSec % 3600) / 60;
+        int secs = totalSec % 60;
 
-        char buffer[30];
-        snprintf(buffer, sizeof(buffer), "%dd %02dh %02dm %02ds", days, hours, minutes, seconds);
-        return String(buffer);
+        String uptime = "";
+        if(days > 0) uptime += String(days) + "d ";
+        uptime += String(hours) + "h " + String(mins) + "m " + String(secs) + "s";
+        return uptime;
     }
 
     long getUptimeSeconds() {
@@ -33,7 +34,7 @@ public:
     }
 
     String getChipModel() {
-        return String(ESP.getChipModel());
+        return String(ESP.getChipModel()) + " Rev " + String(ESP.getChipRevision());
     }
 };
 
