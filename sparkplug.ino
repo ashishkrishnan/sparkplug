@@ -7,7 +7,10 @@
 #include "src/connectivity/connectivity.h"
 #include "src/webservice/webservice.h"
 #include "src/wakeonlan/wol.h"
+#include "src/time/timeprovider.h"
+#include "src/logger/EventLogger.h"
 #include <Arduino.h>
+
 
 #ifdef RUN_TESTS_ON_BOOT
   #include "src/tests/TestRunner.h"
@@ -29,28 +32,27 @@ Wol* wol = nullptr;
 
 void executeWake(String os, String strategy) {
     if(!safety.isSafeToOperate()) {
-        web_service.logEvent(
-            "[CRITICAL] Wake Aborted. Thermal/Safety checked failed (>=" + String(MAX_TEMP_C) + ") degrees");
+        Log.log("[CRITICAL] Wake Aborted. Thermal/Safety checked failed (>=" + String(MAX_TEMP_C) + ") degrees");
         return;
     }
 
-    web_service.logEvent("[Wake] Pulsing Relay (Wake)...");
+    Log.log("[Wake] Pulsing Relay (Wake)...");
     power.triggerPulse();
 
-    web_service.logEvent("[Wake] Waiting " + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS/1000) + "s for BIOS...");
+    Log.log("[Wake] Waiting " + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS/1000) + "s for BIOS...");
 
     bootSystem->startSequence(os, strategy);
 }
 
 void executeShutdown() {
-    web_service.logEvent("[Shutdown] Shutdown Requested.");
+    Log.log("[Shutdown] Shutdown Requested.");
 
     if(safety.isSafeShutdownAllowed()) {
-        web_service.logEvent("[Shutdown] Target PC is ON. Pulsing Relay...");
+        Log.log("[Shutdown] Target PC is ON. Pulsing Relay...");
         power.triggerPulse();
         bootSystem->startShutdown();
     } else {
-        web_service.logEvent("[Shutdown] Target PC already OFF. Ignored.");
+        Log.log("[Shutdown] Target PC already OFF. Ignored.");
     }
 }
 #endif
@@ -66,22 +68,24 @@ void setup() {
     Serial.println("--- TESTS COMPLETE ---");
     while(1) delay(1000);
 #else
-    web_service.logEvent("[Sparkplug] Starting system");
+    Log.log("[Sparkplug] Starting system");
 
     power.setup();
-    bootSystem = new Boot(&hwKb, [](String msg) {
-        web_service.logEvent(msg);
-    });
-    wol = new Wol([](String msg) {
-        web_service.logEvent(msg);
-    });
     network.setupConnectivity();
+    time_provider.setup();
+
+    Log.setTimeProvider([]() -> String {
+        return time_provider.getFormattedTime();
+    });
+
+    bootSystem = new Boot(&hwKb);
+    wol = new Wol();
 
     // Pass the callbacks
     wol->setupWol(executeWake);
     web_service.setupWebAPI(executeWake, executeShutdown);
 
-    web_service.logEvent("[Sparkplug] Boot Complete. Ready.");
+    Log.log("[Sparkplug] Boot Complete. Ready.");
 #endif
 }
 

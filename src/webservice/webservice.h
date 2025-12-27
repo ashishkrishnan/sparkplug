@@ -2,7 +2,6 @@
 #define WEBSERVICE_H
 
 #include <WebServer.h>
-#include "../logger/EventLogger.h"
 
 typedef void (*WakeCallback)(String os, String strategy);
 
@@ -11,7 +10,6 @@ typedef void (*ShutDownCallback)();
 class WebService {
 private:
     WebServer server;
-    EventLogger logger;
 
     // Callbacks
     WakeCallback wakeCb;
@@ -25,7 +23,5 @@ public:
     void setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown);
 
     void handleWebAPILoop();
-
-    void logEvent(String msg);
 };
 #endif

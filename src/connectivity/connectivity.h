@@ -12,14 +12,6 @@ public:
     virtual String getIpAddress() = 0;
     virtual String getMacAddress() = 0;
     virtual long getWifiSignalStrength() = 0;
-
-    virtual float getInternalTemp() = 0;
-    virtual String getChipModel() = 0;
-    virtual uint32_t getFreeHeap() = 0;
-    virtual uint32_t getTotalHeap() = 0;
-
-    virtual String getFormattedTime() = 0;
-    virtual String getUptime() = 0;
 };
 
 class Connectivity : public IConnection {
@@ -31,14 +23,6 @@ public:
     String getIpAddress() override;
     String getMacAddress() override;
     long getWifiSignalStrength() override;
-
-    float getInternalTemp() override;
-    String getChipModel() override;
-    uint32_t getFreeHeap() override;
-    uint32_t getTotalHeap() override;
-
-    String getFormattedTime() override;
-    String getUptime() override;
 };
 
 #endif
