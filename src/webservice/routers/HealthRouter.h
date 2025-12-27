@@ -31,8 +31,8 @@ public:
         // Hardware
         json += "\"hardware\": {";
         json += "\"chip\": \"" + system_info.getChipModel() + "\",";
-        json += "\"free_ram_kb\": " + String(freeRam) + ",";
-        json += "\"total_ram_kb\": " + String(totalRam) + ",";
+        json += "\"free_ram_kb\": " + String(freeRam/1024) + ",";
+        json += "\"total_ram_kb\": " + String(totalRam/1024) + ",";
         json += "\"temp_c\": " + String(system_info.getInternalTemp());
         json += "},";
 
