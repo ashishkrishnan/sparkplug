@@ -4,16 +4,14 @@
 #include "wol.h"
 
 #include <utility>
-#include "../connectivity/connectivity.h"
 #include "../safety/safety.h"
-
-extern Connectivity network;
+#include "../system/systeminfo.h"
 
 Wol::Wol(Logger logger)  : _logger(std::move(logger)) {}
 
 // TODO(ak) duplicated. Remove from Wol & WebService.
 bool Wol::isThermalUnsafe() {
-    float currentTemp = network.getInternalTemp();
+    float currentTemp = system_info.getInternalTemp();
     if (currentTemp > MAX_TEMP_C) {
         _logger("[CRITICAL] : Temp " + String(currentTemp) + "C exceeds limit!");
         return true;
