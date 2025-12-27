@@ -46,13 +46,11 @@ void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
     });
 
     server.begin();
-    Udp.begin(WOL_PORT);
     logger.log("[SparkPlug] Service Ready! - All systems go!", network.getFormattedTime());
 }
 
 void WebService::handleWebAPILoop() {
     server.handleClient();
-    checkWoL();
 }
 
 void WebService::logEvent(String msg) {
@@ -66,18 +64,4 @@ bool WebService::isThermalUnsafe() {
         return true;
     }
     return false;
-}
-
-void WebService::checkWoL() {
-    int size = Udp.parsePacket();
-    if (size == 102) {
-        Udp.read(packetBuffer, 102);
-        if (packetBuffer[0] == 0xFF) {
-            logger.log("[WAKE] WoL Packet Received", network.getFormattedTime());
-            if (!isThermalUnsafe() && wakeCb) {
-                // Wake Ubuntu (Default) with Default Strategy
-                wakeCb(OS_NAME_PRIMARY, DEFAULT_BOOT_STRATEGY);
-            }
-        }
-    }
 }
