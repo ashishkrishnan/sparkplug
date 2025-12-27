@@ -46,7 +46,7 @@ void WebService::setupWebAPI(WakeCallback onWake, ShutDownCallback onShutdown) {
     });
 
     server.begin();
-    logger.log("[SparkPlug] Service Ready! - All systems go!", network.getFormattedTime());
+    logger.log("[Sparkplug] Service Ready! - All systems go!", network.getFormattedTime());
 }
 
 void WebService::handleWebAPILoop() {

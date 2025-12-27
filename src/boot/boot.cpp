@@ -34,13 +34,13 @@ void Boot::startSequence(String os, String strategy) {
     _stateStartTime = millis();
     _lastHeartbeat = millis();
 
-    _logger("[BOOT] Started Async Wait (" + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS) + "ms)");
+    _logger("[Boot] Started Async Wait (" + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS) + "ms)");
 }
 
 void Boot::startShutdown() {
     _state = SHUTTING_DOWN;
     _stateStartTime = millis();
-    _logger("[SHUTDOWN] System Locked for Shutdown...");
+    _logger("[Shutdown] System Locked for Shutdown...");
 }
 
 void Boot::update() {
@@ -58,7 +58,7 @@ void Boot::update() {
 
                 _state = COOLING_DOWN;
                 _stateStartTime = millis();
-                _logger("[BOOT] Sequence Done. Cooling down.");
+                _logger("[Boot] Sequence Done. Cooling down.");
                 return;
             }
 
@@ -75,7 +75,7 @@ void Boot::update() {
         case COOLING_DOWN:
             if (timeInState >= (COOLDOWN_PERIOD_IN_SECONDS * 1000)) {
                 _state = IDLE;
-                _logger("[BOOT] System Ready (Idle)");
+                _logger("[Boot] System Ready (Idle)");
             }
             break;
 
@@ -84,7 +84,7 @@ void Boot::update() {
             if (timeInState > 5000) {
                 _state = COOLING_DOWN;
                 _stateStartTime = millis();
-                _logger("[SHUTDOWN] Shutdown lock released.");
+                _logger("[Shutdown] Shutdown lock released.");
             }
             break;
 
@@ -94,7 +94,7 @@ void Boot::update() {
 }
 
 void Boot::performNavigation() {
-    _logger("[BOOT] Navigating Menu...");
+    _logger("[Boot] Navigating Menu...");
 
     if (_targetOs == OS_NAME_SECONDARY) {
         for (int i = 0; i < GRUB_SECONDARY_OS_POSITION - 1; i++) {
@@ -108,7 +108,7 @@ void Boot::performNavigation() {
         _kb->pressKey(KEY_ENTER);
         delay(100); _kb->releaseAll();
     }
-    _logger("[BOOT] Success. Selected " + _targetOs);
+    _logger("[Boot] Success. Selected " + _targetOs);
 }
 
 #endif //BOOT_CPP_H
