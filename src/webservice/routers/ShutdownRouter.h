@@ -1,23 +1,30 @@
-#ifndef SHUTDOWN_CONTROLLER_H
-#define SHUTDOWN_CONTROLLER_H
+#ifndef SHUTDOWN_ROUTER_H
+#define SHUTDOWN_ROUTER_H
 
 #include <WebServer.h>
-#include "../../connectivity/connectivity.h"
-#include "../../logger/EventLogger.h"
-#include "../webservice.h"
+#include "../../core/systemmanager.h"
 
 class ShutdownRouter {
 public:
-    static void handle(WebServer &server, Connectivity &network, ShutDownCallback cb) {
-        Log.log("[Shutdown] Request received. Sending Ping to Target PC...");
+    static void handle(WebServer &server) {
+        bool force = (server.arg("force") == "true");
+        CommandResult result = system_manager.triggerShutdown(force, "API");
+        switch (result) {
+            case CommandResult::SUCCESS:
+                server.send(200, "text/plain", "Shutdown Sequence Started");
+                break;
 
-        if (network.isTargetPCAlive()) {
-            Log.log("[Shutdown] Target PC is ON. Executing...");
-            server.send(200, "text/plain", "Executing Safe Shutdown");
-            if (cb) cb();
-        } else {
-            Log.log("[Shutdown] Target PC is unreachable (OFF). Aborting.");
-            server.send(409, "text/plain", "Target PC is already OFF.");
+            case CommandResult::ALREADY_OFFLINE:
+                server.send(409, "text/plain", "Target PC is already Offline. Use ?force=true");
+                break;
+
+            case CommandResult::BUSY:
+                server.send(429, "text/plain", "System Busy: Sequence in progress");
+                break;
+
+            case CommandResult::THERMAL_UNSAFE:
+                server.send(503, "text/plain", "Critical: System Unsafe (Thermal Limit)");
+                break;
         }
     }
 };
