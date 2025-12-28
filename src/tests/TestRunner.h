@@ -20,7 +20,7 @@ void runSuite() {
     MockKeyboard mk;
     Boot bl(&mk);
 
-    bl.selectOS("windows");
+    bl.startSequence("windows", "standard");
     bool ok = mk.log.indexOf("KEY:D9") != -1 && mk.log.indexOf("KEY:B0") != -1;
     assertTest("Windows Sequence", ok, mk.log);
 
@@ -29,12 +29,12 @@ void runSuite() {
     mh.fakeTemp = 90.0;
     Safety sy(&mh);
 
-    assertTest("Overheat Block", !sy.isSafeToOperate(), "Allowed > 85C");
+    assertTest("Overheat Block", !sy.isThermalSafe(), "Allowed > 85C");
 
     // Test 3
     mh.fakeTemp = 40.0;
     mh.fakePing = false;
-    assertTest("Offline Shutdown Block", !sy.isSafeShutdownAllowed(), "Allowed offline shutdown");
+    assertTest("Offline Shutdown Block", !sy.isSafeToShutdown(false), "Allowed offline shutdown");
 
     Serial.print("End of test suite");
 }

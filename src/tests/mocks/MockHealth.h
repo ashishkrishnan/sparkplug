@@ -1,18 +1,17 @@
 #ifndef MOCKHEALTH_H
 #define MOCKHEALTH_H
 #include <Arduino.h>
-#include "safety/ISystemHealth.h"
 
-class MockHealth : public ISystemHealth {
+class MockHealth {
     public:
         float fakeTemp = 40.0;
         bool fakePing = true;
 
-        float getInternalTemp() override {
+        float getInternalTemp() {
             return fakeTemp;
         }
 
-        bool isTargetPcAlive(const char *ip) override {
+        bool isTargetPcAlive() {
             return fakePing;
         }
 };
