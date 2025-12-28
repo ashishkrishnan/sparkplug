@@ -1,9 +1,8 @@
 #include "src/boot/keyboard/usbkeyboard.h"
 #include "src/power/relay.h"
-#include "src/safety/health.h"
+#include "src/safety/safety.h"
 #include "src/power/power.h"
 #include "src/boot/boot.h"
-#include "src/safety/safety.h"
 #include "src/connectivity/connectivity.h"
 #include "src/webservice/webservice.h"
 #include "src/wakeonlan/wol.h"
@@ -18,20 +17,19 @@
 
 Relay hwRelay;
 USBKeyboard hwKb;
-Health hwHealth;
 
-Connectivity network;
+Connectivity *network;
 
 Power power(&hwRelay);
 Boot* bootSystem = nullptr;
-Safety safety(&hwHealth);
+Safety safety(network);
 WebService web_service;
 Wol* wol = nullptr;
 
 #ifndef RUN_TESTS_ON_BOOT
 
 void executeWake(String os, String strategy) {
-    if(!safety.isSafeToOperate()) {
+    if(!safety.isThermalSafe()) {
         Log.log("[CRITICAL] Wake Aborted. Thermal/Safety checked failed (>=" + String(MAX_TEMP_C) + ") degrees");
         return;
     }
@@ -47,7 +45,7 @@ void executeWake(String os, String strategy) {
 void executeShutdown() {
     Log.log("[Shutdown] Shutdown Requested.");
 
-    if(safety.isSafeShutdownAllowed()) {
+    if(safety.isSafeToShutdown(false)) {
         Log.log("[Shutdown] Target PC is ON. Pulsing Relay...");
         power.triggerPulse();
         bootSystem->startShutdown();
@@ -71,12 +69,13 @@ void setup() {
     Log.log("[Sparkplug] Starting system");
 
     power.setup();
-    network.setupWifi();
+    network->setupWifi();
     time_provider.setup();
     Log.setTimeProvider([]() -> String {
         return time_provider.getFormattedTime();
     });
-    network.setupHostName();
+    network->setupHostName();
+    safety.setup(network);
 
     bootSystem = new Boot(&hwKb);
     wol = new Wol();
@@ -91,7 +90,7 @@ void setup() {
 
 void loop() {
 #ifndef RUN_TESTS_ON_BOOT
-    network.handleConnectivityLoop();
+    network->handleConnectivityLoop();
 
     // Handle Wake-on-Lan requests
     wol->handleWolLoop();
