@@ -40,12 +40,12 @@ public:
         }
 
         if (!force && _boot->isCoolingDown()) {
-            Log.log("[Manager] Wake Rejected: Cooling down in progress (" + String(_boot->getCoolDownRemaining()) + "s)");
+            Log.log("[Manager] Wake Rejected. Cooling down in progress (" + String(_boot->getCoolDownRemaining()) + "s)");
             return CommandResult::COOLING_DOWN;
         }
 
         if (_safety->isTargetOnline()) {
-            Log.log("[Manager] Wake Skipped: Target Online");
+            Log.log("[Manager] Wake Skipped. Target Online");
             return CommandResult::ALREADY_ONLINE;
         }
 
@@ -57,7 +57,7 @@ public:
     }
 
     CommandResult triggerShutdown(String source = "Unknown") {
-        Log.log("[Manager] Shutdown Request: " + source);
+        Log.log("[Manager] Shutdown Request for" + source);
 
         if (!_safety->isThermalSafe()) {
             return CommandResult::THERMAL_UNSAFE;
@@ -68,12 +68,12 @@ public:
         }
 
         if (!_safety->isTargetOnline()) {
-            Log.log("[Manager] Shutdown Skipped: Target Offline");
+            Log.log("[Manager] Shutdown Skipped. Target Offline");
             return CommandResult::ALREADY_OFFLINE;
         }
 
         if (_boot->isCoolingDown()) {
-            Log.log("[Manager] Shutdown Rejected: Cooling down in progress (" + String(_boot->getCoolDownRemaining()) + "s)");
+            Log.log("[Manager] Shutdown Rejected. Cooling down in progress (" + String(_boot->getCoolDownRemaining()) + "s)");
             return CommandResult::COOLING_DOWN;
         }
 

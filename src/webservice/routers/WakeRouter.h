@@ -25,12 +25,12 @@ public:
                 break;
 
             case CommandResult::BUSY:
-                server.send(429, "text/plain", "System Busy: Sequence in progress");
+                server.send(429, "text/plain", "System Busy. Sequence in progress");
                 break;
 
             case CommandResult::COOLING_DOWN: {
                 long remaining = system_manager.getCoolDownRemaining();
-                String msg = "Safety Check: Cool-Down Active (" + String(remaining) +
+                String msg = "Safety Check for active cooldown period (" + String(remaining) +
                              "s remaining). Use ?force=true to override.";
                 server.send(429, "text/plain", msg);
                 break;

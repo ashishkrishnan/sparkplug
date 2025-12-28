@@ -18,15 +18,15 @@ public:
                 break;
 
             case CommandResult::BUSY:
-                server.send(429, "text/plain", "System Busy: Sequence in progress");
+                server.send(429, "text/plain", "System Busy. Sequence in progress");
                 break;
 
             case CommandResult::THERMAL_UNSAFE:
-                server.send(503, "text/plain", "Critical: System Unsafe (Thermal Limit)");
+                server.send(503, "text/plain", "Critical! System Unsafe (Thermal Limit)");
                 break;
             case CommandResult::COOLING_DOWN: {
                 long remaining = system_manager.getCoolDownRemaining();
-                String msg = "Safety Check: Cool-Down Active (" + String(remaining) +
+                String msg = "Safety Check for active cooldown period (" + String(remaining) +
                              "s remaining).";
                 server.send(429, "text/plain", msg);
                 break;
