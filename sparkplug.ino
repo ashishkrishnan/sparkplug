@@ -13,7 +13,7 @@
 
 
 #ifdef RUN_TESTS_ON_BOOT
-  #include "src/tests/TestRunner.h"
+#include "src/tests/TestRunner.h"
 #endif
 
 Relay hwRelay;
@@ -22,10 +22,10 @@ USBKeyboard hwKb;
 Connectivity network;
 
 Power power(&hwRelay);
-Boot* bootSystem = nullptr;
+Boot *bootSystem = nullptr;
 Safety safety = nullptr;
 WebService web_service;
-Wol* wol = nullptr;
+Wol *wol = nullptr;
 
 void setup() {
     Serial.begin(115200);
@@ -36,9 +36,9 @@ void setup() {
     Serial.println("--- STARTING TEST SUITE ---");
     runSuite();
     Serial.println("--- TESTS COMPLETE ---");
-    while(1) delay(1000);
+    while (1) delay(1000);
 #else
-    Log.log("[Sparkplug] Starting system");
+    Log.log("Starting system");
 
     power.setup();
     network.setupWifi();
@@ -59,7 +59,7 @@ void setup() {
 
     web_service.setupWebAPI();
 
-    Log.log("[Sparkplug] Boot Complete. Ready.");
+    Log.log("[Sparkplug] Boot Complete - All systems go!");
 #endif
 }
 

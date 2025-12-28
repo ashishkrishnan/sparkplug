@@ -11,7 +11,7 @@ private:
     int logIdx = 0;
     bool wrapped = false;
 
-    std::function<String()> timeProvider = []() { return String(""); };
+    std::function<String()> timeProvider = []() { return String("Sparkplug"); };
 
 public:
     void setTimeProvider(std::function<String()> provider) {

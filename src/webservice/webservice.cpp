@@ -17,7 +17,7 @@ WebService::WebService() : server(HTTP_PORT) {
 }
 
 void WebService::setupWebAPI() {
-    Log.log("[Sparkplug] WebService Starting");
+    Log.log("[Webservice] WebService Starting");
 
     server.on("/health", HTTP_GET, [this]() {
         HealthRouter::handle(server, network);
@@ -36,7 +36,7 @@ void WebService::setupWebAPI() {
     });
 
     server.begin();
-    Log.log("[Sparkplug] Service Ready! - All systems go!");
+    Log.log("[WebService] Service Ready!");
 }
 
 void WebService::handleWebAPILoop() {

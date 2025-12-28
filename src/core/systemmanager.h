@@ -29,7 +29,7 @@ public:
     }
 
     CommandResult triggerWake(String os, String strategy, bool force = false, String source = "Unknown") {
-        Log.log("[Manager] Wake Request: " + source);
+        Log.log("[Manager] Wake Request from " + source);
 
         if (!_safety->isThermalSafe()) {
             return CommandResult::THERMAL_UNSAFE;
@@ -40,6 +40,7 @@ public:
         }
 
         if (!force && _boot->isCoolingDown()) {
+            Log.log("[Manager] Wake Rejected: Cooling down in progress (" + String(_boot->getCoolDownRemaining()) + "s)");
             return CommandResult::COOLING_DOWN;
         }
 
@@ -48,7 +49,7 @@ public:
             return CommandResult::ALREADY_ONLINE;
         }
 
-        Log.log("[Manager] Executing Wake: " + os);
+        Log.log("[Manager] Target PC is offline. Executing Wake for " + os);
         _power->triggerPulse();
         _boot->startSequence(os, strategy);
 
