@@ -24,7 +24,7 @@ public:
 
         if (currentTemp > MAX_TEMP_C) {
             Log.log(
-                "[SAFETY] CRITICAL: Temp " + String(currentTemp, 1) + "C exceeds limit (" + String(MAX_TEMP_C) + "C)");
+                "[Safety] CRITICAL: Temp " + String(currentTemp, 1) + "C exceeds limit (" + String(MAX_TEMP_C) + "C)");
             return false;
         }
         return true;
@@ -35,7 +35,7 @@ public:
 
         if (_network && !force) {
             if (_network->isTargetPCAlive()) {
-                Log.log("[SAFETY] Blocked: Target PC is already ONLINE. Use force=true to override if available");
+                Log.log("[Safety] Blocked: Target PC is already ONLINE. Use force=true to override if available");
                 return false;
             }
         }
@@ -48,12 +48,16 @@ public:
 
         if (_network && !force) {
             if (!_network->isTargetPCAlive()) {
-                Log.log("[SAFETY] Blocked: Target PC is already OFFLINE.");
+                Log.log("[Safety] Blocked: Target PC is already OFFLINE.");
                 return false;
             }
         }
 
         return true;
+    }
+
+    bool isTargetOnline() {
+        return _network->isTargetPCAlive();
     }
 };
 

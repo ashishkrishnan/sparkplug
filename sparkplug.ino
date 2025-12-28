@@ -9,6 +9,7 @@
 #include "src/time/timeprovider.h"
 #include "src/logger/EventLogger.h"
 #include <Arduino.h>
+#include "src/core/systemmanager.h"
 
 
 #ifdef RUN_TESTS_ON_BOOT
@@ -78,6 +79,8 @@ void setup() {
     safety.setup(network);
 
     bootSystem = new Boot(&hwKb);
+    system_manager.setup(&power, bootSystem, &safety);
+
     wol = new Wol();
 
     // Pass the callbacks
@@ -97,8 +100,6 @@ void loop() {
 
     // Handle API requests
     web_service.handleWebAPILoop();
-    if (bootSystem) {
-        bootSystem->update();
-    }
+    system_manager.update();
 #endif
 }
