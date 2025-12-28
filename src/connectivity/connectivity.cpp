@@ -8,6 +8,8 @@
 #include <ArduinoOTA.h>
 #include <ESPping.h>
 
+#include "logger/EventLogger.h"
+
 void Connectivity::setupWifi() {
     WiFi.setHostname(HOSTNAME);
     WiFi.begin(WIFI_SSID, WIFI_PASS);
@@ -25,6 +27,11 @@ void Connectivity::handleConnectivityLoop() {
 }
 
 bool Connectivity::isTargetPCAlive() {
+    if (WiFi.status() != WL_CONNECTED) {
+        Log.log("[Connectivity] WiFi not connected, cannot ping target PC");
+        return false;
+    }
+
     IPAddress addr;
     if (addr.fromString(TARGET_PC_IP_ADDRESS)) {
         return Ping.ping(addr);
