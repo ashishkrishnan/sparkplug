@@ -11,7 +11,7 @@ public:
     static void handle(WebServer &server, Connectivity &network, ShutDownCallback cb) {
         Log.log("[Shutdown] Request received. Sending Ping to Target PC...");
 
-        if (network.isTargetPCAlive(TARGET_PC_IP_ADDRESS)) {
+        if (network.isTargetPCAlive()) {
             Log.log("[Shutdown] Target PC is ON. Executing...");
             server.send(200, "text/plain", "Executing Safe Shutdown");
             if (cb) cb();

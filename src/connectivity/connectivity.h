@@ -10,7 +10,7 @@ public:
     virtual void setupHostName() = 0;
     virtual void handleConnectivityLoop() = 0;
 
-    virtual bool isTargetPCAlive(const char* targetIp) = 0;
+    virtual bool isTargetPCAlive() = 0;
     virtual String getIpAddress() = 0;
     virtual String getMacAddress() = 0;
     virtual void getMacBytes(uint8_t* buf);
@@ -24,7 +24,7 @@ public:
     void setupHostName() override;
     void handleConnectivityLoop() override;
 
-    bool isTargetPCAlive(const char* targetIp) override;
+    bool isTargetPCAlive() override;
     String getIpAddress() override;
     String getMacAddress() override;
     void getMacBytes(uint8_t* buf) override;

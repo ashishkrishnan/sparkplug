@@ -24,9 +24,9 @@ void Connectivity::handleConnectivityLoop() {
     ArduinoOTA.handle();
 }
 
-bool Connectivity::isTargetPCAlive(const char *targetIp) {
+bool Connectivity::isTargetPCAlive() {
     IPAddress addr;
-    if (addr.fromString(targetIp)) {
+    if (addr.fromString(TARGET_PC_IP_ADDRESS)) {
         return Ping.ping(addr);
     }
     return false;
