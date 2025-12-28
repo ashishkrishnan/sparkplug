@@ -1,22 +1,60 @@
 #ifndef SAFETY_H
 #define SAFETY_H
-#include "ISystemHealth.h"
+
+#include "../../src/system/SystemInfo.h"
+#include "../../src/connectivity/connectivity.h"
+#include "../../src/logger/EventLogger.h"
 #include "../../src/config/config.h"
 
 class Safety {
-    private:
-        ISystemHealth* _health;
-    public:
-        Safety(ISystemHealth* h) : _health(h) {}
+private:
+    Connectivity *_network;
 
-        bool isSafeToOperate() {
-            return _health->getInternalTemp() < MAX_TEMP_C;
+public:
+    Safety(Connectivity *network)
+        : _network(network) {
+    }
+
+    void setup(Connectivity *network) {
+        _network = network;
+    }
+
+    bool isThermalSafe() {
+        float currentTemp = system_info.getInternalTemp();
+
+        if (currentTemp > MAX_TEMP_C) {
+            Log.log(
+                "[SAFETY] CRITICAL: Temp " + String(currentTemp, 1) + "C exceeds limit (" + String(MAX_TEMP_C) + "C)");
+            return false;
+        }
+        return true;
+    }
+
+    bool isSafeToWake(bool force) {
+        if (!isThermalSafe()) return false;
+
+        if (_network && !force) {
+            if (_network->isTargetPCAlive()) {
+                Log.log("[SAFETY] Blocked: Target PC is already ONLINE. Use force=true to override if available");
+                return false;
+            }
         }
 
-        bool isSafeShutdownAllowed() {
-            if (!isSafeToOperate()) return false;
+        return true;
+    }
 
-            return _health->isTargetPcAlive(TARGET_PC_IP_ADDRESS);
+    bool isSafeToShutdown(bool force) {
+        if (!isThermalSafe()) return false;
+
+        if (_network && !force) {
+            if (!_network->isTargetPCAlive()) {
+                Log.log("[SAFETY] Blocked: Target PC is already OFFLINE.");
+                return false;
+            }
         }
+
+        return true;
+    }
 };
-#endif //SAFETY_H
+
+#endif

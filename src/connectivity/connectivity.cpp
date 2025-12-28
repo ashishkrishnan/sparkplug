@@ -8,7 +8,7 @@
 #include <ArduinoOTA.h>
 #include <ESPping.h>
 
-#include "logger/EventLogger.h"
+#include "../logger/EventLogger.h"
 
 void Connectivity::setupWifi() {
     WiFi.setHostname(HOSTNAME);
