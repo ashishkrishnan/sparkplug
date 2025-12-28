@@ -36,8 +36,6 @@ private:
     String _targetOs;
     String _strategy;
 
-    unsigned long _lastSequenceFinishTime = 0;
-
     void performNavigation();
 
 public:
