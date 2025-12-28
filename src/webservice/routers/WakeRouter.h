@@ -25,7 +25,7 @@ public:
             return;
         }
 
-        if (network.isTargetPCAlive(TARGET_PC_IP_ADDRESS) && !force) {
+        if (network.isTargetPCAlive() && !force) {
             Log.log("[Wake] Skipped - Target PC Online", time_provider.getFormattedTime());
             server.send(409, "text/plain", "Target PC is already Online");
             return;
