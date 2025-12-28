@@ -44,7 +44,7 @@ public:
             return CommandResult::COOLING_DOWN;
         }
 
-        if (!force && _safety->isTargetOnline()) {
+        if (_safety->isTargetOnline()) {
             Log.log("[Manager] Wake Skipped: Target Online");
             return CommandResult::ALREADY_ONLINE;
         }
@@ -56,7 +56,7 @@ public:
         return CommandResult::SUCCESS;
     }
 
-    CommandResult triggerShutdown(bool force = false, String source = "Unknown") {
+    CommandResult triggerShutdown(String source = "Unknown") {
         Log.log("[Manager] Shutdown Request: " + source);
 
         if (!_safety->isThermalSafe()) {
@@ -67,12 +67,17 @@ public:
             return CommandResult::BUSY;
         }
 
-        if (!force && !_safety->isTargetOnline()) {
+        if (!_safety->isTargetOnline()) {
             Log.log("[Manager] Shutdown Skipped: Target Offline");
             return CommandResult::ALREADY_OFFLINE;
         }
 
-        Log.log("[Manager] Executing Shutdown");
+        if (_boot->isCoolingDown()) {
+            Log.log("[Manager] Shutdown Rejected: Cooling down in progress (" + String(_boot->getCoolDownRemaining()) + "s)");
+            return CommandResult::COOLING_DOWN;
+        }
+
+        Log.log("[Manager] Target PC is online. Executing Shutdown");
         _power->triggerPulse();
         _boot->startShutdown();
 
