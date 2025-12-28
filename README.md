@@ -11,6 +11,7 @@
   <p>
     <a href="#why">Why?</a> •
     <a href="#capabilities">Capabilities</a> •
+    <a href="#wol">Universal WoL</a> •
     <a href="#api">API</a> •
     <a href="#hardware">Hardware</a> •
     <a href="#wiring">Wiring</a> •
@@ -21,17 +22,17 @@
 
 <br />
 
-Sparkplug sits inside your computer case, connected to the motherboard's USB and power headers, allowing you to remotely Wake, navigate BIOS/Dual-Boot menu and safely shutdown, all via simple REST APIs
+Sparkplug sits inside your computer case, connected to the motherboard's USB and power headers, allowing you to remotely Wake, navigate BIOS/Dual-Boot menus, and safely shutdown, all via simple REST APIs or standard WoL packets.
 
-Unlike standard Wake-on-LANs which are unreliable, mostly due to driver-os conflicts and hardware restrictions, the Sparkplug hooks into the motherboard providing **state awareness**, **thermal safety (overheat protection)**, and **hardware-level keyboard emulation** for navigating GRUB/Boot Managers.
+Unlike traditional Wake-on-LAN solutions, which are often unreliable due to driver/OS conflicts and hardware restrictions, Sparkplug hooks directly into the motherboard. It provides state awareness, thermal safety (overheat protection), and hardware-level keyboard emulation for navigating GRUB/Boot Managers independently of the OS.
 
 ---
 
 <a id="capabilities"></a>
 ## 🚀 Capabilities
 
-* **Reliable Wake-on-LAN (WoL):** Remotely power on your PC over Wifi (WLAN), which triggers a relay to power on via the motherboard headers.
-* **Reliable OS selector:** Use predefined keyboard input to navigate your primary or secondary os (e.g ubuntu or windows)
+* **Universal & reliable Wake-on-LAN (WoL):** Remotely power on your PC and select your target OS using standard WoL on the terminal or even KVM-over-IP interfaces. Sparkplug intercepts magic packets and selects which OS to boot. <a href="#wol">More details</a>.
+* **Reliable OS selector:** Use predefined keyboard input to navigate your primary or secondary os (e.g., ubuntu or windows)
 * **Shutdown:** Safely shuts down your PC.
 * **Thermal Guard:** Monitors internal temperature. If the Sparkplug exceeds **85°C**, it locks out all controls to prevent hardware damage.
 * **Safety protocols:** Prevents any accidental shutdown or wake-ups if Sparkplug detects an ongoing sequence or is in cooldown period.
@@ -40,7 +41,25 @@ Unlike standard Wake-on-LANs which are unreliable, mostly due to driver-os confl
 
 > [!IMPORTANT] 
 > The OS selector capability requires ESP32-S3 with Native USB OTG (On-The-Go) support. 
-> This makes it an ideal case for pretending it to be an HID in order to choose OS. In a later milestone, we will make this modular to flash capabilities based on the board.
+> This makes it an ideal case for emulating as an HID keyboard to choose OS. In a later milestone, we will make this modular to flash capabilities based on the board.
+
+---
+<a id="wol"></a>
+## 📡 How the Universal WoL Selector Works
+Sparkplug has a neat track to enable universal OS selector even via Wake-on-lan packets.
+<br>Add your Sparkplug/ESP32 (mac address) to your favorite WoL app these with modified MAC addresses.
+
+| Boot Target           | Target MAC Address | Action                                        |
+|:----------------------| :--- |:----------------------------------------------|
+| **Your primary OS**   | `XX:XX:XX:XX:XX:AA` | Powers on & selects Primary (e.g., Ubuntu)    |
+| **Your secondary OS** | `XX:XX:XX:XX:XX:BB` | Powers on & selects Secondary (e.g., Windows) |
+| **Default**           | `XX:XX:XX:XX:XX:XX` | Powers on selecting all default settings.     |
+
+<br>You can find these mac addresses in your ``http://<sparkplug>/health`` under `virtual_mac` on first setup.
+
+Notes:
+- The mac address is of the ESP32 hardware and not your target PC.
+- If you don't have a dual-boot, just keep using the standard wake-on-lan packets.
 
 ---
 <a id="api"></a>

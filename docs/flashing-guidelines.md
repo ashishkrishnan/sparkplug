@@ -34,6 +34,9 @@ static const char* TARGET_PC_IP_ADDRESS = "192.168.0.10";
 
 ##### Advanced
 ```cpp
+static uint8_t VIRTUAL_MAC_HEX_PRIMARY = 0xAA; (Used for WoL OS selector for KVM-over-ip interface or general purposes)
+static uint8_t VIRTUAL_MAC_HEX_SECONDARY = 0xBB; (Used for WoL OS selector for KVM-over-ip interface or general purposes)
+
 static const char* DEFAULT_BOOT_STRATEGY = "standard"; // or aggressive
 
 // ESP Configuration
@@ -50,6 +53,11 @@ static const char* NTP_SERVER    = "pool.ntp.org";
 static constexpr int REFRESH_INTERVAL_FOR_HEALTH_API_IN_SECONDS = 30;
 constexpr unsigned long COOLDOWN_PERIOD_IN_SECONDS = 60;
 ```
+> [!IMPORTANT]
+> Defining Virtual Mac address enables the trick where the WoL implemented in Sparkplug listens to all the broadcasted magic packets in your subnet network via UDP on port 9. 
+> In-case of a rare situation, where the virtual mac address matches the real device mac on your network, use the config to play around with a new suffix.
+> https://github.com/ashishkrishnan/sparkplug/pull/18
+
 
 ### Step 3: Manual Flashing via Arduino IDE
 
