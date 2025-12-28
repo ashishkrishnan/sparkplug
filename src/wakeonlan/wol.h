@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <WiFiUdp.h>
 
-typedef void (*WakeCallback)(String os, String strategy);
+typedef std::function<void(String, String)> WakeCallback;
 
 /**
  * Handles Wake-on-lan functionality. In prior versions of sparkplug, it was present in WebService
@@ -12,10 +12,7 @@ class Wol {
 private:
     WiFiUDP Udp;
     WakeCallback onWakeUp;
-    // Helper
     byte packetBuffer[102];
-
-    bool isThermalUnsafe();
 
 public:
     Wol();

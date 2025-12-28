@@ -10,18 +10,7 @@
 
 extern Connectivity network;
 
-Wol::Wol() {}
-
-// TODO(ak) duplicated. Remove from Wol & WebService.
-bool Wol::isThermalUnsafe() {
-    float currentTemp = system_info.getInternalTemp();
-    if (currentTemp > MAX_TEMP_C) {
-        Log.log("[CRITICAL] : Temp " + String(currentTemp) + "C exceeds limit!");
-        return true;
-    }
-
-    return false;
-}
+Wol::Wol(){}
 
 void Wol::setupWol(WakeCallback onWakeUpCallback) {
     onWakeUp = onWakeUpCallback;
@@ -51,8 +40,6 @@ void Wol::handleWolLoop() {
     uint8_t secondaryMac[6];
     memcpy(secondaryMac, actualMacAddress, 6);
     secondaryMac[5] = VIRTUAL_MAC_HEX_SECONDARY;
-
-    if (isThermalUnsafe()) return;
 
     if (memcmp(actualMacAddress, primaryMac, 6) == 0) {
         Log.log("[WoL] Waking up: " + String(OS_NAME_PRIMARY));

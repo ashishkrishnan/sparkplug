@@ -82,9 +82,10 @@ void setup() {
     system_manager.setup(&power, bootSystem, &safety);
 
     wol = new Wol();
+    wol->setupWol([](String os, String strategy) {
+        system_manager.triggerWake(os, strategy, false, "WoL");
+    });
 
-    // Pass the callbacks
-    wol->setupWol(executeWake);
     web_service.setupWebAPI();
 
     Log.log("[Sparkplug] Boot Complete. Ready.");
