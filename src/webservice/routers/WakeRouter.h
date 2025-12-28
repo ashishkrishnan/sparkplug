@@ -2,37 +2,14 @@
 #define WAKE_ROUTER_H
 
 #include <WebServer.h>
-#include "../../boot/boot.h"
-#include "../../connectivity/connectivity.h"
-#include "../../logger/EventLogger.h"
-#include "../webservice.h"
+#include "../../core/systemmanager.h"
 
 class WakeRouter {
 public:
-    static void handle(WebServer &server, Boot *bootSystem, Connectivity &network, WakeCallback cb) {
-        if (bootSystem->isBusy()) {
-            Log.log("[Wake] Rejected - System Busy", time_provider.getFormattedTime());
-            server.send(429, "text/plain", "Busy: Sequence in progress");
-            return;
-        }
-
-        bool force = server.hasArg("force") && server.arg("force") == "true";
-        if (bootSystem->isCoolingDown() && !force) {
-            long remaining = bootSystem->getCoolDownRemaining();
-            String msg = "Safety Check: Cool-Down Active (" + String(remaining) + "s remaining). Use ?force=true.";
-            Log.log("[Wake] Rejected - Cool Down", time_provider.getFormattedTime());
-            server.send(429, "text/plain", msg);
-            return;
-        }
-
-        if (network.isTargetPCAlive() && !force) {
-            Log.log("[Wake] Skipped - Target PC Online", time_provider.getFormattedTime());
-            server.send(409, "text/plain", "Target PC is already Online");
-            return;
-        }
+    static void handle(WebServer &server) {
+        bool force = (server.arg("force") == "true");
 
         String os = server.hasArg("os") ? server.arg("os") : OS_NAME_PRIMARY;
-
         if (os == "primary" || os == OS_NAME_PRIMARY || os == "first" || os == "default") {
             os = OS_NAME_PRIMARY;
         } else if (os == "secondary" || os == OS_NAME_SECONDARY || os == "second") {
@@ -40,11 +17,33 @@ public:
         }
 
         String strategy = server.hasArg("strategy") ? server.arg("strategy") : DEFAULT_BOOT_STRATEGY;
+        CommandResult result = system_manager.triggerWake(os, strategy, force, "WebAPI");
 
-        Log.log("[Wake] Start [" + os + "] Mode: " + strategy, time_provider.getFormattedTime());
-        server.send(200, "text/plain", "Wake Sequence Started for " + os);
+        switch (result) {
+            case CommandResult::SUCCESS:
+                server.send(200, "text/plain", "Wake Sequence Started for " + os + " using strategy " + strategy);
+                break;
 
-        if (cb) cb(os, strategy);
+            case CommandResult::BUSY:
+                server.send(429, "text/plain", "System Busy: Sequence in progress");
+                break;
+
+            case CommandResult::COOLING_DOWN: {
+                long remaining = system_manager.getCoolDownRemaining();
+                String msg = "Safety Check: Cool-Down Active (" + String(remaining) +
+                             "s remaining). Use ?force=true to override.";
+                server.send(429, "text/plain", msg);
+                break;
+            }
+
+            case CommandResult::ALREADY_ONLINE:
+                server.send(409, "text/plain", "Target PC is already Online. Use ?force=true to override.");
+                break;
+
+            case CommandResult::THERMAL_UNSAFE:
+                server.send(503, "text/plain", "Critical: System Unsafe (Thermal Limit Exceeded)");
+                break;
+        }
     }
 };
 #endif

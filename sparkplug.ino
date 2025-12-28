@@ -85,7 +85,7 @@ void setup() {
 
     // Pass the callbacks
     wol->setupWol(executeWake);
-    web_service.setupWebAPI(executeWake, executeShutdown);
+    web_service.setupWebAPI();
 
     Log.log("[Sparkplug] Boot Complete. Ready.");
 #endif
