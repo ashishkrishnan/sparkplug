@@ -27,6 +27,8 @@ Safety safety = nullptr;
 WebService web_service;
 Wol *wol = nullptr;
 
+void onWolRequest(String os, String strategy);
+
 void setup() {
     Serial.begin(115200);
     hwKb.init();
@@ -53,9 +55,7 @@ void setup() {
     system_manager.setup(&power, bootSystem, &safety);
 
     wol = new Wol();
-    wol->setupWol([](String os, String strategy) {
-        system_manager.triggerWake(os, strategy, false, "WoL");
-    });
+    wol->setupWol(onWolRequest);
 
     web_service.setupWebAPI();
 
@@ -74,4 +74,9 @@ void loop() {
     web_service.handleWebAPILoop();
     system_manager.update();
 #endif
+}
+
+void onWolRequest(String os, String strategy) {
+    Log.log("[WoL] Received Wake-on-Lan request for " + os);
+    system_manager.triggerWake(os, strategy, false, "WoL");
 }

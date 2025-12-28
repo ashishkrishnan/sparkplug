@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <WiFiUdp.h>
 
-typedef std::function<void(String, String)> WakeCallback;
+typedef void (*WakeCallback)(String, String);
 
 /**
  * Handles Wake-on-lan functionality. In prior versions of sparkplug, it was present in WebService
@@ -13,6 +13,7 @@ private:
     WiFiUDP Udp;
     WakeCallback onWakeUp;
     byte packetBuffer[102];
+    uint8_t _systemMac[6];
 
 public:
     Wol();
