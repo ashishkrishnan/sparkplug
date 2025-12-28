@@ -27,35 +27,6 @@ Safety safety(network);
 WebService web_service;
 Wol* wol = nullptr;
 
-#ifndef RUN_TESTS_ON_BOOT
-
-void executeWake(String os, String strategy) {
-    if(!safety.isThermalSafe()) {
-        Log.log("[CRITICAL] Wake Aborted. Thermal/Safety checked failed (>=" + String(MAX_TEMP_C) + ") degrees");
-        return;
-    }
-
-    Log.log("[Wake] Pulsing Relay (Wake)...");
-    power.triggerPulse();
-
-    Log.log("[Wake] Waiting " + String(TIME_TAKEN_TO_REACH_BOOT_MENU_IN_MILLIS/1000) + "s for BIOS...");
-
-    bootSystem->startSequence(os, strategy);
-}
-
-void executeShutdown() {
-    Log.log("[Shutdown] Shutdown Requested.");
-
-    if(safety.isSafeToShutdown(false)) {
-        Log.log("[Shutdown] Target PC is ON. Pulsing Relay...");
-        power.triggerPulse();
-        bootSystem->startShutdown();
-    } else {
-        Log.log("[Shutdown] Target PC already OFF. Ignored.");
-    }
-}
-#endif
-
 void setup() {
     Serial.begin(115200);
     hwKb.init();
