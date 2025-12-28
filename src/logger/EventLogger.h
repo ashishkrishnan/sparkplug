@@ -11,7 +11,7 @@ private:
     int logIdx = 0;
     bool wrapped = false;
 
-    std::function<String()> timeProvider = []() { return String("NO SYNC"); };
+    std::function<String()> timeProvider = []() { return String(""); };
 
 public:
     void setTimeProvider(std::function<String()> provider) {
