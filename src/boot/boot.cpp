@@ -7,7 +7,6 @@
 #include "../logger/EventLogger.h"
 
 Boot::Boot(IKeyboard *kb) : _kb(kb) {
-    _lastSequenceFinishTime = 0;
     _state = IDLE;
 }
 
@@ -21,8 +20,13 @@ bool Boot::isCoolingDown() {
 
 long Boot::getCoolDownRemaining() {
     if (!isCoolingDown()) return 0;
-    unsigned long elapsed = (millis() - _lastSequenceFinishTime) / 1000;
-    return COOLDOWN_PERIOD_IN_SECONDS - elapsed;
+
+    unsigned long timeInState = millis() - _stateStartTime;
+    unsigned long elapsedSeconds = timeInState / 1000;
+
+    if (elapsedSeconds >= COOLDOWN_PERIOD_IN_SECONDS) return 0;
+
+    return COOLDOWN_PERIOD_IN_SECONDS - elapsedSeconds;
 }
 
 void Boot::startSequence(String os, String strategy) {
