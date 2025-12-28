@@ -17,11 +17,11 @@ public:
         }
 
         String strategy = server.hasArg("strategy") ? server.arg("strategy") : DEFAULT_BOOT_STRATEGY;
-        CommandResult result = system_manager.triggerWake(os, strategy, force, "WebAPI");
+        CommandResult result = system_manager.triggerWake(os, strategy, force, "Web");
 
         switch (result) {
             case CommandResult::SUCCESS:
-                server.send(200, "text/plain", "Wake Sequence Started for " + os + " using strategy " + strategy);
+                server.send(200, "text/plain", "Wake Sequence Started for " + os + " using " + strategy + " strategy");
                 break;
 
             case CommandResult::BUSY:
@@ -37,7 +37,7 @@ public:
             }
 
             case CommandResult::ALREADY_ONLINE:
-                server.send(409, "text/plain", "Target PC is already Online. Use ?force=true to override.");
+                server.send(409, "text/plain", "Target PC is already Online");
                 break;
 
             case CommandResult::THERMAL_UNSAFE:
