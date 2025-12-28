@@ -19,11 +19,11 @@
 Relay hwRelay;
 USBKeyboard hwKb;
 
-Connectivity *network;
+Connectivity network;
 
 Power power(&hwRelay);
 Boot* bootSystem = nullptr;
-Safety safety(network);
+Safety safety = nullptr;
 WebService web_service;
 Wol* wol = nullptr;
 
@@ -41,13 +41,13 @@ void setup() {
     Log.log("[Sparkplug] Starting system");
 
     power.setup();
-    network->setupWifi();
+    network.setupWifi();
     time_provider.setup();
     Log.setTimeProvider([]() -> String {
         return time_provider.getFormattedTime();
     });
-    network->setupHostName();
-    safety.setup(network);
+    network.setupHostName();
+    safety.setup(&network);
 
     bootSystem = new Boot(&hwKb);
     system_manager.setup(&power, bootSystem, &safety);
@@ -65,7 +65,7 @@ void setup() {
 
 void loop() {
 #ifndef RUN_TESTS_ON_BOOT
-    network->handleConnectivityLoop();
+    network.handleConnectivityLoop();
 
     // Handle Wake-on-Lan requests
     wol->handleWolLoop();
