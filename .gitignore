@@ -1,7 +1,12 @@
+# IDE
 .idea/
 
+# PlatformIO
 .pio/
-
 platformio.ini
 
+# Secrets
 src/config/wifi.h
+
+# macOS
+.DS_Store

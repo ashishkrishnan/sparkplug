@@ -1,0 +1,10 @@
+# Build artifacts
+/target/
+/.embuild/
+
+# Cargo credentials (secrets)
+/.cargo/credentials.toml
+
+# VS Code (keep launch.json for debug config)
+/.vscode/*
+!/.vscode/launch.json
