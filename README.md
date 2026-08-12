@@ -1,3 +1,5 @@
+
+
 <div align="center">
 
   <img src="sparkplug.png" alt="Sparkplug Logo" width="200" />
@@ -86,7 +88,7 @@ Note: API auto-refreshes every 30 seconds configurable or call with query parame
 
 <br>*Debug*: <br>`http://<sparkplug>/debug/type?key=a`
 
-Note: Use this if you want to test if the Sparkplug is getting detected as a keyboard.
+Note: Use this if you want to test if the Sparkplug is getting detected as a keyboard. Supported special keys: `enter`, `esc`, `right`, `left`, `up`, `down`, `shift`, and `win`.
 
 > [!IMPORTANT]
 > Check [API Documentation](/docs/api-docs.md) for more information
